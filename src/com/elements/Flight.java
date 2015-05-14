@@ -77,7 +77,6 @@ public class Flight {
         try {
             departureTime = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(newDeparture);
             arrivalTime = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(newArrival);
-            System.out.println("NEW DATE = " + departureTime);
         }catch (ParseException ex){
             System.out.println("Parse Error");
         }
@@ -96,4 +95,24 @@ public class Flight {
 
         return dayArray;
     }
+
+    public boolean equals(Object obj){
+        if (!(obj instanceof Flight)) {
+            return false;
+        }
+
+        Flight f = (Flight) obj;
+
+
+        return this.departureTime.equals(f.departureTime)
+               && this.arrivalTime.equals(f.arrivalTime)
+               && this.origin.equals(f.origin)
+               && this.destination.equals(f.destination)
+               && this.dayOfMonth.equals(f.dayOfMonth);
+    }
+
+    public String toString(){
+        return origin +"->" + destination + ", " + departureTime + "->" + arrivalTime + ", " + dayOfMonth;
+    }
+
 }

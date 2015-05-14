@@ -1,5 +1,6 @@
 package com.project;
 
+import com.elements.Duty;
 import com.elements.Flight;
 import com.simplex.Simplex;
 
@@ -10,8 +11,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class Main {
 
@@ -70,13 +73,22 @@ public class Main {
 
         }
 
-       /* for(int i = 1; i <= 28; i++){
+      /*  for(int i = 1; i <= 28; i++){
             System.out.println("------------------DAY " + i + "------------------------");
             for(int j = 0; j < flights.get(i).size(); j++){
-                System.out.println(flights.get(i).get(j).getOrigin() + " -> " + flights.get(i).get(j).getDestination() + ", DAY = " + flights.get(i).get(j).getDayOfMonth());
+                System.out.println(flights.get(i).get(j).getOrigin() + " -> " + flights.get(i).get(j).getDestination() + ", DEPARTURE = " + flights.get(i).get(j).getDepartureTime() + ", " + flights.get(i).get(j).getArrivalTime());
             }
         }*/
 
+        HashSet<Duty> duties = Duty.makeDuties(flights);
+        int l = 0;
+        for(Duty d : duties){
+            System.out.println("-------------DUTY----------------");
+            for(int j = 0; j < d.getFlights().size(); j++){
+                System.out.println(d.getFlights().get(j).getOrigin() + "->" + d.getFlights().get(j).getDestination()
+                + ", " + d.getFlights().get(j).getDepartureTime() + "->" + d.getFlights().get(j).getArrivalTime());
+            }
+        }
 
         ArrayList<Double> costMatrix = new ArrayList<Double>(Arrays.asList(30.0, 40.0, 50.0));
 
@@ -92,4 +104,5 @@ public class Main {
         exampleProblem.solve();
 
     }
+
 }
