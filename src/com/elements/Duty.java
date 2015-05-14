@@ -47,8 +47,6 @@ public class Duty {
                 }
             }
         }
-
-
         return true;
     }
 
@@ -68,27 +66,49 @@ public class Duty {
         return lastDate;
     }
 
+    public String getOrigin(){
+        return flights.get(0).getOrigin();
+    }
+
+    public String getDestination(){
+        return flights.get(flights.size()-1).getDestination();
+    }
+
     public ArrayList<Flight> getFlights(){
         return flights;
     }
 
+    public boolean hasFlight(int flightId){
+        for(Flight f : flights) {
+            if(f.getFlightId() == flightId){
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public void addFlight(Flight f){
-        flights.add(f);
-        double diff;
-        if(flights.size() == 1){
-            elapsed = (((double)flights.get(0).getArrivalTime().getTime() - (double)flights.get(0).getDepartureTime().getTime())/(60*60*1000));
+        if(flights.size() == 0){
+            flights.add(f);
+            elapsed = (((double)flights.get(0).getArrivalTime().getTime() - (double)flights.get(0).getDepartureTime().getTime())/(60*1000));
             flyTime = elapsed;
             firstDate = f.getDepartureTime();
         }
         else{
-            elapsed = (((double)flights.get(flights.size()-1).getArrivalTime().getTime() - (double)flights.get(0).getDepartureTime().getTime())/(60*60*1000));
-            flyTime += (((double)f.getArrivalTime().getTime() - (double)f.getDepartureTime().getTime())/(60*60*1000));
+            double elapsedTemp = (((double)f.getArrivalTime().getTime() - (double)flights.get(0).getDepartureTime().getTime())/(60*1000));
+            double flyTimeTemp = flyTime + (((double)f.getArrivalTime().getTime() - (double)f.getDepartureTime().getTime())/(60*1000));
+            if(elapsedTemp <= 720 && flyTimeTemp <= 480){
+                elapsed = elapsedTemp;
+                flyTime = flyTimeTemp;
+                flights.add(f);
+            }
+            else{
+                return;
+            }
         }
 
         lastDate = f.getArrivalTime();
-
-
-
 
         double product = elapsed * FD;
 
@@ -99,7 +119,6 @@ public class Duty {
 
     public static HashSet<Duty> makeDuties(Map<Integer, ArrayList<Flight> > flights){
         HashSet<Duty> duties = new HashSet<Duty>();
-        String origin, destination;
 
         for(Map.Entry<Integer, ArrayList<Flight>> entry : flights.entrySet()){
             for(int i = 0; i < entry.getValue().size(); i++){
@@ -113,23 +132,22 @@ public class Duty {
                 }
             }
         }
-
         return duties;
     }
 
     public static void depthSearch(ArrayList<Flight> flights, Flight parent, Flight child, int childCounter, Duty d){
         if(child == null) return;
 
-        if(parent.getDestination().equals(child.getOrigin()) //Restrictions
-                && child.getDepartureTime().compareTo(parent.getArrivalTime()) > 0){
+        long diffMin = (child.getDepartureTime().getTime() - parent.getArrivalTime().getTime()) / 60000;
+
+        if(parent.getDestination().equals(child.getOrigin()) && diffMin >= 30 && diffMin <= 240){
             d.addFlight(child);
-            if(childCounter+1 < flights.size()) depthSearch(flights, child, flights.get(childCounter+1), childCounter+1, d);
+            if(childCounter+1 < flights.size())
+                depthSearch(flights, child, flights.get(childCounter+1), childCounter+1, d);
         }
         else{
-            if(childCounter+1 < flights.size()) depthSearch(flights, parent, flights.get(childCounter+1), childCounter+1, d);
+            if(childCounter+1 < flights.size())
+                depthSearch(flights, parent, flights.get(childCounter+1), childCounter+1, d);
         }
-
-
     }
-
 }

@@ -7,6 +7,7 @@ import java.util.Date;
 
 public class Flight {
 
+    private int flightId;
     private String origin;
     private String destination;
     private String equipment;
@@ -21,6 +22,7 @@ public class Flight {
         this.equipment = equipment;
         this.operatingDays = parseDays(days);
         this.dayOfMonth = 0;
+        this.flightId = -1;
         try{
             this.arrivalTime = new SimpleDateFormat("HH:mm").parse(arrivalTime);
             this.departureTime = new SimpleDateFormat("HH:mm").parse(departureTime);
@@ -37,10 +39,15 @@ public class Flight {
         this.arrivalTime = f.arrivalTime;
         this.departureTime = f.departureTime;
         this.dayOfMonth = f.dayOfMonth;
+        this.flightId = -1;
     }
 
     public String getOrigin(){
         return origin;
+    }
+
+    public int getFlightId() {
+        return flightId;
     }
 
     public String getDestination(){
@@ -67,7 +74,7 @@ public class Flight {
         return dayOfMonth;
     }
 
-    public void setDayOfMonth(Integer day){
+    public void setDayOfMonth(Integer day, int flightId){
         this.dayOfMonth = day;
         String originalDeparture = new SimpleDateFormat("HH:mm").format(departureTime);
         String originalArrival = new SimpleDateFormat("HH:mm").format(arrivalTime);
@@ -80,6 +87,7 @@ public class Flight {
         }catch (ParseException ex){
             System.out.println("Parse Error");
         }
+        this.flightId = flightId;
     }
 
     public ArrayList<Integer> parseDays(String days){
