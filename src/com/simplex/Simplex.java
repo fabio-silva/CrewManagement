@@ -2,6 +2,7 @@ package com.simplex;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.Scanner;
 
 public class Simplex {
@@ -20,10 +21,14 @@ public class Simplex {
     public ArrayList<Double> solve(){
         ArrayList<Double> solution = new ArrayList<Double>();
 
-        constructProblem();
+        System.out.println("binary matrix\n\n");
+        constructProblem(); // contruct problem binary matrix
+        System.out.println("dual matrix\n\n");
         constructDualProblem();
+        System.out.println("Add slack variables to matrix\n\n");
         addSlackVariables();
-        reverseLastLine();
+        System.out.println("reverse last line\n\n");
+        //reverseLastLine();
 
         solution = matrixMethod();
 
@@ -32,6 +37,17 @@ public class Simplex {
     }
 
     private ArrayList<Double> matrixMethod() {
+
+        for (int i = 0; i < problemMatrix.size(); i++){
+            for (int j = 0; j < problemMatrix.get(i).size(); j++){
+                System.out.printf("%-7.2f", problemMatrix.get(i).get(j));
+            }
+            System.out.println();
+        }
+
+        System.out.println("\n");
+        System.out.println("\n");
+
         int column = chooseColumnPivot();
         Scanner sc = new Scanner(System.in);
         int line;
@@ -41,9 +57,14 @@ public class Simplex {
 
             System.out.println("Line: " + line);
             System.out.println("Column: " + column);
-            constructNextStep(column, line);
+
+            if (line != -1) {
+                constructNextStep(column, line);
+                System.out.println("encontrou");
+            }
+
             column = chooseColumnPivot();
-            sc.next();
+            //sc.next();
         }
 
 
@@ -84,7 +105,7 @@ public class Simplex {
 
         for (int i = 0; i < nextMatrix.size(); i++){
             for (int j = 0; j < nextMatrix.get(i).size(); j++){
-                System.out.printf("%-10.2f", nextMatrix.get(i).get(j));
+                System.out.printf("%-7.2f", nextMatrix.get(i).get(j));
             }
             System.out.println();
         }
@@ -96,7 +117,7 @@ public class Simplex {
     }
 
     private int chooseLinePivot(int column) {
-        int res = 0;
+        ArrayList<Integer> res = new ArrayList<Integer>();
         double quotient;
         int columnsNumber = problemMatrix.get(0).size();
         double lessValue = Double.POSITIVE_INFINITY;
@@ -104,30 +125,54 @@ public class Simplex {
         for (int i = 0; i < problemMatrix.size() - 1; i++) {
             if (problemMatrix.get(i).get(column) != 0) {
                 quotient = (problemMatrix.get(i).get(columnsNumber - 1) / problemMatrix.get(i).get(column));
-                if (quotient < lessValue) {
+                System.out.println("quotient: " + quotient);
+                if (quotient < lessValue && quotient >= 0) {
+                    System.out.println("escolheu: " + quotient);
                     lessValue = quotient;
-                    res = i;
+                    res.clear();
+                    res.add(i);
+                }
+                else if (quotient == lessValue) {
+                    res.add(i);
                 }
             }
         }
 
-        return res;
+        if (res.isEmpty()) {
+            return -1;
+        }
+        else {
+            Random rand = new Random();
+            int randomNum = rand.nextInt(res.size());
+            return res.get(randomNum);
+        }
     }
 
     private int chooseColumnPivot() {
         int matrixLastLine = problemMatrix.size() - 1;
-        double lessValue = 0;
-        int res = -1;
+        double highValue = 0;
+        ArrayList<Integer> res = new ArrayList<Integer>();
 
         for (int i = 0; i < problemMatrix.get(matrixLastLine).size() - 1; i++){
             double elem = problemMatrix.get(matrixLastLine).get(i);
-            if (elem < lessValue){
-                lessValue = elem;
-                res = i;
+            if (elem > highValue){
+                highValue = elem;
+                res.clear();
+                res.add(i);
+            }
+            else if (elem == highValue && elem != 0) {
+                res.add(i);
             }
         }
 
-        return res;
+        if (res.isEmpty()) {
+            return -1;
+        }
+        else {
+            Random rand = new Random();
+            int randomNum = rand.nextInt(res.size());
+            return res.get(randomNum);
+        }
     }
 
     private void reverseLastLine() {
@@ -160,12 +205,12 @@ public class Simplex {
             problemMatrix.set(i, auxiliarLine);
         }
 
-        /*for (int i = 0; i < problemMatrix.size(); i++){
+        for (int i = 0; i < problemMatrix.size(); i++){
             for (int j = 0; j < problemMatrix.get(i).size(); j++){
                 System.out.print(problemMatrix.get(i).get(j) + " ");
             }
             System.out.println("");
-        }*/
+        }
     }
 
     private void constructDualProblem() {
@@ -181,12 +226,12 @@ public class Simplex {
             auxiliarMatrix.add(auxiliarLine);
         }
 
-        /*for (int i = 0; i < auxiliarMatrix.size(); i++){
+        for (int i = 0; i < auxiliarMatrix.size(); i++){
             for (int j = 0; j < auxiliarMatrix.get(i).size(); j++){
                 System.out.print(auxiliarMatrix.get(i).get(j) + " ");
             }
             System.out.println("");
-        }*/
+        }
 
         problemMatrix = auxiliarMatrix;
 
@@ -217,13 +262,12 @@ public class Simplex {
 
         problemMatrix.add(costMatrix);
 
-
-        /*for (int i = 0; i < problemMatrix.size(); i++){
+        for (int i = 0; i < problemMatrix.size(); i++){
             for (int j = 0; j < problemMatrix.get(i).size(); j++){
                 System.out.print(problemMatrix.get(i).get(j) + " ");
             }
             System.out.println("");
-        }*/
+        }
     }
 
 }

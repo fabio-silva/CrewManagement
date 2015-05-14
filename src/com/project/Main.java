@@ -11,12 +11,14 @@ public class Main {
     public static void main(String[] args) {
 
 
-        ArrayList<Double> costMatrix = new ArrayList<Double>(Arrays.asList(30.0, 40.0, 50.0));
+        ArrayList<Double> costMatrix = new ArrayList<Double>(Arrays.asList(30.0, 40.0, 20.0, 10.0, 25.0));
 
         ArrayList<ArrayList<Double>> problemMatrix = new ArrayList<ArrayList<Double>>(Arrays.asList(
-                new ArrayList<Double>(Arrays.asList(1.0, 0.0, 1.0)),
-                new ArrayList<Double>(Arrays.asList(0.0, 1.0, 1.0)),
-                new ArrayList<Double>(Arrays.asList(0.0, 1.0, 0.0))
+                new ArrayList<Double>(Arrays.asList(1.0, 1.0, 0.0, 0.0, 1.0)),
+                new ArrayList<Double>(Arrays.asList(1.0, 0.0, 1.0, 0.0, 0.0)),
+                new ArrayList<Double>(Arrays.asList(0.0, 1.0, 1.0, 0.0, 0.0)),
+                new ArrayList<Double>(Arrays.asList(1.0, 0.0, 0.0, 1.0, 1.0)),
+                new ArrayList<Double>(Arrays.asList(0.0, 1.0, 1.0, 0.0, 0.0))
         ));
 
 
