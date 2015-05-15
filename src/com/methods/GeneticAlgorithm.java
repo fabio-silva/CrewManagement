@@ -19,7 +19,7 @@ public class GeneticAlgorithm extends Method{
                 int flightCounter = 0;
 
                 for (int j = 0; j < chromosome.size(); j++) {
-                    if (chromosome.get(i).equals(1.0) && problemMatrix.get(i).get(j).equals(1.0)) {
+                    if (chromosome.get(j).equals(1.0) && problemMatrix.get(i).get(j).equals(1.0)) {
                         flightCounter++;
                     }
                 }
