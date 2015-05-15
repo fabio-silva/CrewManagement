@@ -1,21 +1,16 @@
-package com.simplex;
+package com.methods;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 
-public class Simplex {
+public class Simplex extends  Method{
 
-    ArrayList<Double> costMatrix;
 
-    ArrayList<ArrayList<Double>> problemMatrix;
 
 
     public Simplex(ArrayList<Double> costMatrix, ArrayList<ArrayList<Double>> problemMatrix) {
-        this.costMatrix = costMatrix;
-
-        this.problemMatrix = problemMatrix;
+        super(costMatrix, problemMatrix);
     }
 
     public ArrayList<Double> solve(){

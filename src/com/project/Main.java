@@ -3,21 +3,20 @@ package com.project;
 import com.elements.Duty;
 import com.elements.Flight;
 import com.elements.Pairing;
-import com.simplex.Simplex;
+import com.methods.Simplex;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class Main {
+    public static ArrayList<Pairing> pairingsList;
+    public static HashSet<Duty> duties;
 
     public static void main(String[] args) {
 
@@ -82,7 +81,7 @@ public class Main {
             }
         }*/
 
-        HashSet<Duty> duties = Duty.makeDuties(flights);
+        duties = Duty.makeDuties(flights);
 
         System.out.println("Number of duties: " + duties.size());
 
@@ -98,7 +97,7 @@ public class Main {
 
         HashSet<Pairing> pairings = Pairing.makePairings(duties);
 
-        ArrayList<Pairing> pairingsList = new ArrayList<Pairing>(pairings);
+        pairingsList = new ArrayList<Pairing>(pairings);
 
         System.out.println("Number of pairings after remove feasible: " + pairingsList.size());
 
