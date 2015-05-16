@@ -17,10 +17,11 @@ import java.util.Map;
 public class Main {
     public static ArrayList<Pairing> pairingsList;
     public static HashSet<Duty> duties;
+    public static Map<Integer, ArrayList<Flight> > flights;
 
     public static void main(String[] args) {
 
-        Map<Integer, ArrayList<Flight> > flights = new HashMap<Integer, ArrayList<Flight>>();
+        flights = new HashMap<Integer, ArrayList<Flight>>();
         ArrayList< Flight > fileFlights = new ArrayList<Flight>();
 
         for(int i = 1; i <= 7; i++){  // CHAGE TO 28

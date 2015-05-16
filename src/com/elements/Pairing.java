@@ -1,5 +1,7 @@
 package com.elements;
 
+import com.project.Main;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Map;
@@ -138,5 +140,14 @@ public class Pairing {
         }
     }
 
+    public boolean hasCommonFlights(Pairing p){
+        for(int i = 0; i < Main.flights.size(); i++){
+            if(this.hasFlight(i) && p.hasFlight(i)){
+                return true;
+            }
+        }
+
+        return false;
+    }
 
 }

@@ -6,19 +6,22 @@ import java.util.Objects;
 
 public class Chromosome implements Comparable{
 
-    private ArrayList<Double> genes;
+    private ArrayList<Integer> genes;
     private double fit;
 
-    public Chromosome(ArrayList<Double> genes, double fit){
+    public Chromosome(ArrayList<Integer> genes){
         this.genes = genes;
-        this.fit = fit;
     }
 
     public double getFit(){
         return fit;
     }
 
-    public ArrayList<Double> getGenes(){
+    public void setFit(double fit){
+        this.fit = fit;
+    }
+
+    public ArrayList<Integer> getGenes(){
         return genes;
     }
 
@@ -27,7 +30,7 @@ public class Chromosome implements Comparable{
         double zeroCounter = 0.0;
 
         for(int i = 0; i < genes.size(); i++){
-            if(genes.get(i).intValue() == 0){
+            if(genes.get(i) == 0){
                 zeroCounter += 1.0;
             }
         }
