@@ -1,8 +1,10 @@
 package com.project;
 
+import com.crew.Person;
 import com.elements.Duty;
 import com.elements.Flight;
 import com.elements.Pairing;
+import com.methods.Assignment;
 import com.methods.Simplex;
 
 import java.io.BufferedReader;
@@ -18,11 +20,13 @@ public class Main {
     public static ArrayList<Pairing> pairingsList;
     public static HashSet<Duty> duties;
     public static Map<Integer, ArrayList<Flight> > flights;
+    public static ArrayList<Person> crew;
 
     public static void main(String[] args) {
 
         flights = new HashMap<Integer, ArrayList<Flight>>();
         ArrayList< Flight > fileFlights = new ArrayList<Flight>();
+        crew = new ArrayList<Person>();
 
         for(int i = 1; i <= 7; i++){  // CHAGE TO 28
             flights.put(i, new ArrayList<Flight>());
@@ -35,6 +39,13 @@ public class Main {
                 String[] parts = line.split(" ");
                 fileFlights.add(new Flight(parts[0], parts[1], parts[2], parts[3], parts[4], parts[5]));
             }
+
+            reader = new BufferedReader(new FileReader("crew"));
+            while((line = reader.readLine()) != null){
+                String[] parts = line.split(" ");
+                crew.add(new Person(parts[0], parts[1], Double.parseDouble(parts[2]), Integer.parseInt(parts[3]), parts[4], Integer.parseInt(parts[5])));
+            }
+
         }catch(FileNotFoundException ex){
             System.out.println("Not such file");
         }catch(IOException ex){
@@ -134,6 +145,10 @@ public class Main {
         Simplex exampleProblem = new Simplex(costMatrix, matrix);
 
         exampleProblem.solve();
+
+        
+
+        Assignment assignment = new Assignment(pairings, crew);
 
         /*
         ArrayList<Double> costMatrix = new ArrayList<Double>(Arrays.asList(30.0, 40.0, 20.0, 10.0, 25.0));
