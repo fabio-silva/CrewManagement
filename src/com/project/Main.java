@@ -152,7 +152,7 @@ public class Main {
 
         
 
-        Assignment assignment = new Assignment(pairingsList, crew);
+        //Assignment assignment = new Assignment(pairingsList, crew);
 
         /*
         ArrayList<Double> costMatrix = new ArrayList<Double>(Arrays.asList(30.0, 40.0, 20.0, 10.0, 25.0));

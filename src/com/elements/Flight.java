@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 public class Flight {
 
@@ -48,6 +49,10 @@ public class Flight {
 
     public int getFlightId() {
         return flightId;
+    }
+
+    public double getDuration(){
+        return TimeUnit.MILLISECONDS.toMinutes(arrivalTime.getTime() - departureTime.getTime());
     }
 
     public String getDestination(){

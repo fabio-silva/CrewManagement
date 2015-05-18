@@ -22,6 +22,7 @@ public class Duty {
     private long flyTime;
     private Date firstDate;
     private Date lastDate;
+    private double biggestFlightTime;
 
     public Duty(){
         flights = new ArrayList<Flight>();
@@ -84,6 +85,19 @@ public class Duty {
 
     public Date getFirstDate(){
         return firstDate;
+    }
+
+    public double getBiggestFlightTime() {
+        double biggestFlightTime = 0;
+
+        for(int i = 0; i < flights.size(); i++){
+            double biggestFlightTimeTemp = flights.get(i).getDuration();
+            if(biggestFlightTimeTemp > biggestFlightTime){
+                biggestFlightTime = biggestFlightTimeTemp;
+            }
+        }
+
+        return biggestFlightTime;
     }
 
     public Date getLastDate(){

@@ -4,6 +4,7 @@ import com.project.Main;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -33,6 +34,18 @@ public class Pairing {
         return duties;
     }
 
+    public long getTimeAwayFromBase() {
+        return timeAwayFromBase;
+    }
+
+    public Date getFirstDate(){
+        return duties.get(0).getFirstDate();
+    }
+
+    public Date getLastDate() {
+        return duties.get(duties.size() - 1).getLastDate();
+    }
+
     public ArrayList<Flight> getFlights(){
         ArrayList<Flight> flights = new ArrayList<Flight>();
 
@@ -41,6 +54,19 @@ public class Pairing {
         }
 
         return flights;
+    }
+
+    public double getBiggestFlightTime(){
+        double biggestTime = 0;
+
+        for (int i = 0; i < duties.size(); i++ ) {
+            double biggestFlightTimeTemp = duties.get(i).getBiggestFlightTime();
+            if(biggestFlightTimeTemp > biggestTime){
+                biggestTime = biggestFlightTimeTemp;
+            }
+        }
+
+        return biggestTime;
     }
 
     public String getOrigin(){
