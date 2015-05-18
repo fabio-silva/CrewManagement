@@ -5,6 +5,7 @@ import com.elements.Duty;
 import com.elements.Flight;
 import com.elements.Pairing;
 import com.methods.Assignment;
+import com.methods.GeneticAlgorithm;
 import com.methods.Simplex;
 
 import java.io.BufferedReader;
@@ -98,13 +99,12 @@ public class Main {
         System.out.println("Number of duties: " + duties.size());
 
         for(Duty d : duties){
-            if(hasFlight(d)) {
                 System.out.println("-------------DUTY----------------");
                 for (int j = 0; j < d.getFlights().size(); j++) {
                     System.out.println(d.getFlights().get(j).getOrigin() + "->" + d.getFlights().get(j).getDestination()
                             + ", " + d.getFlights().get(j).getDepartureTime() + "->" + d.getFlights().get(j).getArrivalTime());
                 }
-            }
+
         }
 
         HashSet<Pairing> pairings = Pairing.makePairings(duties);
@@ -142,13 +142,17 @@ public class Main {
 
         System.out.println("GERADO");
 
-        Simplex exampleProblem = new Simplex(costMatrix, matrix);
+        /*Simplex exampleProblem = new Simplex(costMatrix, matrix);
 
-        exampleProblem.solve();
+        exampleProblem.solve();*/
+
+        GeneticAlgorithm ga = new GeneticAlgorithm(costMatrix, matrix);
+        ga.solve();
+
 
         
 
-        Assignment assignment = new Assignment(pairings, crew);
+        Assignment assignment = new Assignment(pairingsList, crew);
 
         /*
         ArrayList<Double> costMatrix = new ArrayList<Double>(Arrays.asList(30.0, 40.0, 20.0, 10.0, 25.0));
@@ -167,7 +171,6 @@ public class Main {
         exampleProblem.solve();
 
         */
-
     }
 
     public static boolean hasFlight(Duty d){

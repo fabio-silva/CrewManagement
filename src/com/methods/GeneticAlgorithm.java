@@ -20,7 +20,21 @@ public class GeneticAlgorithm extends Method{
     public GeneticAlgorithm(ArrayList<Double> costMatrix, ArrayList<ArrayList<Double>> problemMatrix){
         super(costMatrix, problemMatrix);
         population = new ArrayList<Chromosome>();
-        noInitialPopulation = Main.pairingsList.size() * 2;
+        noInitialPopulation = 100;
+    }
+
+    public int allFlightsCovered(ArrayList<Integer>gene){
+        int flightSize = problemMatrix.size();
+        int coveredFlights = 0;
+
+        for(int i = 0; i < Main.pairingsList.size(); i++){
+            if(gene.get(i) == 1){
+                coveredFlights += Main.pairingsList.get(i).getFlights().size();
+            }
+        }
+
+
+        return flightSize - coveredFlights;
     }
 
     public void initialPopulation(){
@@ -40,7 +54,7 @@ public class GeneticAlgorithm extends Method{
                 genes.add(0);
             }
         }
-
+        System.out.println("added gene");
         while(selectedPairings.size() > 0){
             nextGene = r.nextInt(selectedPairings.size());
             genes.set(selectedPairings.get(nextGene), 1);
@@ -49,8 +63,11 @@ public class GeneticAlgorithm extends Method{
             getPairingsWithDifferentFlights(selectedFlights, selectedPairings);
         }
 
+        int coveredFlights = allFlightsCovered(genes);
+        System.out.println("COVEred = " + coveredFlights);
+        if(coveredFlights == 0) System.exit(1);
         Chromosome c = new Chromosome(genes);
-        correctChromosome(c);
+        //correctChromosome(c);
         c.setFit(fitnessCost(c));
         population.add(c);
 
@@ -86,6 +103,8 @@ public class GeneticAlgorithm extends Method{
 
         do {
             allFlightsCovered = true;
+            System.out.println("DO");
+            System.out.println(chromosome.getGenes());
             for (int i = 0; i < problemMatrix.size(); i++) {
                 int flightCounter = 0;
 
@@ -95,7 +114,7 @@ public class GeneticAlgorithm extends Method{
                     }
                 }
 
-                if (flightCounter > 1) { //Flight not covered exactly once
+                if (flightCounter < 1) { //Flight not covered exactly once
                     allFlightsCovered = false;
                     coverFlight(i, chromosome);
                 }
@@ -176,6 +195,7 @@ public class GeneticAlgorithm extends Method{
         int genesMutated = r.nextInt(1 + chromosome.getGenes().size());
         int[] possibleValues = new int[]{0, 1};
         double zeroProbability = fittest.zeroProbability();
+        System.out.println("zero prob = " + zeroProbability);
         double[] discreteProbabilities = new double[]{zeroProbability, 1-zeroProbability};
         EnumeratedIntegerDistribution distribution = new EnumeratedIntegerDistribution(possibleValues, discreteProbabilities);
         int[] samples = distribution.sample(genesMutated);
@@ -187,10 +207,14 @@ public class GeneticAlgorithm extends Method{
     }
 
     public ArrayList<Double> solve(){
-        for(int i = 0; i < noInitialPopulation; i++){
+
+
+        while(true){
             initialPopulation();
         }
 
+       /* System.exit(1);
+        System.out.println("initial");
         Collections.sort(population);
         Chromosome parent1, parent2;
 
@@ -199,11 +223,17 @@ public class GeneticAlgorithm extends Method{
             parent2 = population.get(1);
 
             Chromosome child = new Chromosome(crossover(parent1, parent2));
+            System.out.println("MUTATING");
             mutate(child);
+            System.out.println("MUTATED");
             correctChromosome(child);
+            System.out.println("CORRECTED");
             child.setFit(fitnessCost(child));
             population.set(population.size()-1, child);
             Collections.sort(population);
-        }
+
+        }*/
+
+
     }
 }
