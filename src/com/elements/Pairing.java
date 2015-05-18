@@ -2,32 +2,45 @@ package com.elements;
 
 import com.project.Main;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class Pairing {
 
     final static int MAX_DUTIES = 3;
     final static double MIN_REST = 10.0;
     final static double MAX_REST = 18.0;
-    final static double TAFB = 7200.0;
+    final static double TAFB = 500;
     final static int _8IN24_ = 2;
     final double FD = 0.29;
 
     private ArrayList<Duty> duties;
 
     private double cost;
-    private double timeAwayFromBase;
+    private long timeAwayFromBase;
+
 
     public Pairing(){
         duties = new ArrayList<Duty>();
         cost = 0.0;
-        timeAwayFromBase = 0.0;
+        timeAwayFromBase = 0;
     }
 
     public ArrayList<Duty> getDuties() {
         return duties;
+    }
+
+    public ArrayList<Flight> getFlights(){
+        ArrayList<Flight> flights = new ArrayList<Flight>();
+
+        for(int i = 0; i < duties.size(); i++){
+            flights.addAll(duties.get(i).getFlights());
+        }
+
+        return flights;
     }
 
     public String getOrigin(){
@@ -62,14 +75,19 @@ public class Pairing {
     }
 
     private void addDuty(Duty d) {
+        System.out.println("------------------");
         if(duties.size() == 0){
             duties.add(d);
-            timeAwayFromBase = ((double)d.getLastDate().getTime() - (double)d.getFirstDate().getTime()) / (60*1000);
+            timeAwayFromBase = TimeUnit.MILLISECONDS.toMinutes(d.getLastDate().getTime() - d.getFirstDate().getTime());
         }
         else{
-            double timeAwayFromBaseTemp = ((double)d.getLastDate().getTime() - (double)duties.get(duties.size()-1).getFirstDate().getTime()) / (60*1000);
-            if(duties.size() < 2 && timeAwayFromBaseTemp < TAFB && getOrigin().compareTo(d.getDestination()) == 0 ){
+            long timeAwayFromBaseTemp = TimeUnit.MILLISECONDS.toMinutes((d.getLastDate().getTime() - duties.get(duties.size()-1).getFirstDate().getTime()));
+            if(timeAwayFromBaseTemp > TAFB){
+                System.out.println("> TAFB");
+            }
+            if(duties.size() < 2 && getOrigin().compareTo(d.getDestination()) == 0 ){
                 duties.add(d);
+                System.out.println("ADD");
                 timeAwayFromBase = timeAwayFromBaseTemp;
             }
             else{

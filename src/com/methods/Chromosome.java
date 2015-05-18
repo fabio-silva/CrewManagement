@@ -1,5 +1,7 @@
 package com.methods;
 
+import com.project.Main;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Objects;
@@ -36,7 +38,7 @@ public class Chromosome implements Comparable{
         }
 
         if(zeroCounter != 0){
-            probability = (double)genes.size() / zeroCounter;
+            probability = zeroCounter/(double)genes.size();
         }
 
         return probability;
@@ -47,4 +49,15 @@ public class Chromosome implements Comparable{
         double othersFit = ((Chromosome)o).getFit();
         return Double.compare(this.fit, othersFit);
     }
+
+    public double getCost(){
+        double cost = 0.0;
+        for(int i = 0; i < genes.size(); i++){
+            cost += Main.pairingsList.get(i).getCost();
+        }
+
+        return cost;
+    }
+
+
 }

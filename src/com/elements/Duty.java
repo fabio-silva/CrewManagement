@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 public class Duty {
     final static double MIN_SIT = 0.5;
@@ -17,41 +18,64 @@ public class Duty {
 
     private ArrayList<Flight> flights;
     private double cost;
-    private double elapsed;
-    private double flyTime;
+    private long elapsed;
+    private long flyTime;
     private Date firstDate;
     private Date lastDate;
 
     public Duty(){
         flights = new ArrayList<Flight>();
         cost = 0.0;
-        elapsed = 0.0;
-        flyTime = 0.0;
+        elapsed = 0;
+        flyTime = 0;
         firstDate = null;
         lastDate = null;
     }
 
     public boolean equals(Object obj){
+        Duty d = (Duty)obj;
+
         if(!(obj instanceof Duty)){
+            System.out.println("NOT INSTANCE");
             return false;
         }
 
-        if(((Duty) obj).flights.size() != flights.size()){
+        if(((Duty) obj).flights.size() != this.flights.size()){
+            System.out.println("DIFFERENT SIZE");
             return false;
         }
+
+        int counter = 0;
 
         for(int i = 0; i < flights.size(); i++){
-            if(this.flights.get(i).getOrigin().equals("FWA")) {
-                if (!(this.flights.get(i).equals(((Duty) obj).flights.get(i)))) {
-                    return false;
+            for(int j = 0; j < ((Duty) obj).flights.size(); j++){
+               /* if(flights.get(i).getFlightId() == ((Duty) obj).flights.get(j).getFlightId()){*/
+                if(flights.get(i).equals(((Duty) obj).flights.get(j))){
+                    System.out.println(flights.get(i) + " VS " + ((Duty) obj).getFlights().get(j));
+
+                    counter++;
+                    break;
                 }
             }
         }
-        return true;
+        if(counter == flights.size()){
+            System.out.println("ALL FOUND");
+            return true;
+        } else{
+            System.out.println("ALL NOT FOUND");
+            return false;
+        }
     }
 
     public int hashCode() {
-        return (int)(cost*10+flyTime);
+        int hash = (int)cost*10;
+        for(int i = 0; i < flights.size(); i++){
+            hash += flights.get(i).getFlightId();
+        }
+
+        System.out.println("HASH = " + hash);
+
+        return hash;
     }
 
     public double getCost(){
@@ -70,6 +94,14 @@ public class Duty {
         return flights.get(0).getOrigin();
     }
 
+    public String toString(){
+        String res = new String();
+        for(int i = 0; i < flights.size(); i++){
+            res.concat(flights.get(i) + "\n");
+        }
+
+        return res;
+    }
     public String getDestination(){
         return flights.get(flights.size()-1).getDestination();
     }
@@ -91,13 +123,13 @@ public class Duty {
     public void addFlight(Flight f){
         if(flights.size() == 0){
             flights.add(f);
-            elapsed = (((double)flights.get(0).getArrivalTime().getTime() - (double)flights.get(0).getDepartureTime().getTime())/(60*1000));
+            elapsed = TimeUnit.MILLISECONDS.toMinutes(( flights.get(0).getArrivalTime().getTime() - flights.get(0).getDepartureTime().getTime()));
             flyTime = elapsed;
             firstDate = f.getDepartureTime();
         }
         else{
-            double elapsedTemp = (((double)f.getArrivalTime().getTime() - (double)flights.get(0).getDepartureTime().getTime())/(60*1000));
-            double flyTimeTemp = flyTime + (((double)f.getArrivalTime().getTime() - (double)f.getDepartureTime().getTime())/(60*1000));
+            long elapsedTemp = TimeUnit.MILLISECONDS.toMinutes((f.getArrivalTime().getTime() - flights.get(0).getDepartureTime().getTime()));
+            long flyTimeTemp = flyTime + TimeUnit.MILLISECONDS.toMinutes((f.getArrivalTime().getTime() - f.getDepartureTime().getTime()));
             if(elapsedTemp <= 720 && flyTimeTemp <= 480){
                 elapsed = elapsedTemp;
                 flyTime = flyTimeTemp;
@@ -127,8 +159,19 @@ public class Duty {
                     Flight f = entry.getValue().get(i);
                     Flight c = entry.getValue().get(j);
                     d.addFlight(f);
+                    System.out.println("ADDING(1).....");
+                    if(duties.add(d) == true){
+                        System.out.println("ADDED(1)");
+                    }else{
+                        System.out.println("NOT ADDED(1)");
+                    }
                     depthSearch(entry.getValue(), f, c, j, d);
-                    duties.add(d);
+                    System.out.println("ADDING(2).....");
+                    if(duties.add(d) == true){
+                        System.out.println("ADDED(2)");
+                    }else{
+                        System.out.println("NOT ADDED(2)");
+                    }
                 }
             }
         }
