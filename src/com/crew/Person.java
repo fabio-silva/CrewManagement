@@ -27,6 +27,10 @@ public class Person {
         this.maxNoDays = maxNoDays;
     }
 
+    public Person() {
+
+    }
+
     public void addPairings(Pairing p){
         pairings.add(p);
     }
@@ -49,5 +53,21 @@ public class Person {
         }
 
         return true;
+    }
+
+    public double getAuction(String flightType, double pairingDays) {
+        double auction = 0;
+
+        if(flightType.compareTo(flightPreference) == 0){
+            auction += 50;
+        }
+
+        if(pairingDays < maxNoDays){
+            auction += 50;
+        }
+
+        auction = ( (flightHours / 10) * (age / 10) ) + auction;
+
+        return auction;
     }
 }

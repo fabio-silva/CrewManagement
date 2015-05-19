@@ -5,6 +5,8 @@ import com.crew.Person;
 import com.elements.Pairing;
 
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class Assignment {
 
@@ -21,7 +23,6 @@ public class Assignment {
         for(Pairing p : pairings){
             double pairingDays = p.getTimeAwayFromBase() / 1440;
             double biggestFlightTime = p.getBiggestFlightTime();
-            ArrayList<Person> availableCrew = findAvailableCrew(p);
 
             String flightType;
 
@@ -35,44 +36,85 @@ public class Assignment {
                 flightType = "small";
             }
 
-            findCapitain(availableCrew, flightType, pairingDays);
-            findFirstOfficer(availableCrew, flightType, pairingDays);
-            findPurser(availableCrew, flightType, pairingDays);
-            findAttendant(availableCrew, flightType, pairingDays);
+            ArrayList<String> missingCrew = findAvailableCrew(p, flightType, pairingDays);
+
+            if(missingCrew.size() != 0){
+                System.out.println("FALTA TRIPULACAO: " + missingCrew.get(0));
+            }
         }
     }
 
-    private ArrayList<Person> findAvailableCrew(Pairing p) {
-        ArrayList<Person> availablePerson = new ArrayList<Person>();
+    private ArrayList<String> findAvailableCrew(Pairing p, String flightType, double pairingDays) {
+
+        ArrayList<String> missingCrew = new ArrayList<String>();
+
+        Map<Double, Person> attendants = new TreeMap<Double, Person>();
+        Person purser = new Person();
+        Person captain = new Person();
+        Person firstOfficer = new Person();
+        double purserBiggestAuction = 0;
+        double captainBiggestAuction = 0;
+        double firstOfficerBiggestAuction = 0;
+        double auction;
 
         for(Person person : crew){
             if (person.isAvailable(p)) {
-                availablePerson.add(person);
+                auction = person.getAuction(flightType, pairingDays);
+                if(person.getFunction().compareTo("purser") == 0 && auction > purserBiggestAuction){
+                    purser = person;
+                    purserBiggestAuction = auction;
+                }
+                else if(person.getFunction().compareTo("first_officer") == 0 && auction > firstOfficerBiggestAuction){
+                    firstOfficer = person;
+                    firstOfficerBiggestAuction = auction;
+                }
+                else if(person.getFunction().compareTo("capitain") == 0 && auction > captainBiggestAuction){
+                    captain = person;
+                    captainBiggestAuction = auction;
+                }
+                else if(person.getFunction().compareTo("attendant") == 0){
+                    attendants.put(auction, person);
+                }
             }
         }
 
-        return availablePerson;
-    }
+        if(purserBiggestAuction == 0) missingCrew.add("purser");
+        if(captainBiggestAuction == 0) missingCrew.add("capitain");
+        if(firstOfficerBiggestAuction == 0) missingCrew.add("first_officer");
 
-    private void findAttendant(ArrayList<Person> availableCrew, String flightType, double pairingDays) {
 
-        for(Person selectedAttentant : availableCrew){
 
+        if(flightType.compareTo("small") == 0 && attendants.size() < 2 ||
+                flightType.compareTo("medium") == 0 && attendants.size() < 4 ||
+                flightType.compareTo("big") == 0 && attendants.size() < 6) missingCrew.add("attendant");
+
+        if(missingCrew.size() != 0 ) return missingCrew;
+
+        purser.addPairings(p);
+        captain.addPairings(p);
+        firstOfficer.addPairings(p);
+
+        int attendantsSize = attendants.size();
+
+        if(flightType.compareTo("small") == 0){
+            attendants.get(attendantsSize - 1).addPairings(p);
+            attendants.get(attendantsSize - 2).addPairings(p);
+        } else if(flightType.compareTo("medium") == 0){
+            attendants.get(attendantsSize - 1).addPairings(p);
+            attendants.get(attendantsSize - 2).addPairings(p);
+            attendants.get(attendantsSize - 3).addPairings(p);
+            attendants.get(attendantsSize - 4).addPairings(p);
+        }
+        else if(flightType.compareTo("big") == 0){
+            attendants.get(attendantsSize - 1).addPairings(p);
+            attendants.get(attendantsSize - 2).addPairings(p);
+            attendants.get(attendantsSize - 3).addPairings(p);
+            attendants.get(attendantsSize - 4).addPairings(p);
+            attendants.get(attendantsSize - 5).addPairings(p);
+            attendants.get(attendantsSize - 6).addPairings(p);
         }
 
+        return missingCrew;
     }
 
-    private void findPurser(ArrayList<Person> availableCrew, String flightType, double pairingDays) {
-
-    }
-
-    private void findFirstOfficer(ArrayList<Person> availableCrew, String flightType, double pairingDays) {
-
-    }
-
-    private void findCapitain(ArrayList<Person> availableCrew, String flightType, double pairingDays) {
-        ArrayList<Person> candidates = new ArrayList<Person>();
-
-
-    }
 }
