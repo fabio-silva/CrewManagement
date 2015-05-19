@@ -161,7 +161,7 @@ public class Pairing {
 
     public static HashSet<Pairing> makePairings(HashSet<Duty> duties) {
 
-        HashSet<Pairing> pairings = new HashSet<Pairing>();
+        ArrayList<Pairing> pairings = new ArrayList<Pairing>();
         ArrayList<Duty> dutiesList = new ArrayList<Duty>(duties);
 
         for (int i = 0; i < dutiesList.size(); i++) {
@@ -170,17 +170,23 @@ public class Pairing {
                 Duty f = dutiesList.get(i);
                 Duty c = dutiesList.get(j);
                 p.addDuty(f);
-                depthSearch(dutiesList, f, c, j, p);
-                if (isFeasible(p))
+                if(isFeasible(p)){
                     pairings.add(p);
+                }
+                Pairing pCopy = new Pairing();
+                pCopy.addDuty(f);
+                depthSearch(dutiesList, f, c, j, pCopy);
+                if (isFeasible(pCopy))
+                    pairings.add(pCopy);
             }
         }
 
-        for(Pairing p : pairings){
+        HashSet<Pairing> hashFromArray = new HashSet<Pairing>(pairings);
+        for(Pairing p : hashFromArray){
             System.out.println("-------PAIRING-----------");
             System.out.println(p);
         }
-        return pairings;
+        return hashFromArray;
     }
 
     public static boolean isFeasible(Pairing p) {

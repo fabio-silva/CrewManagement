@@ -159,7 +159,6 @@ public class Duty {
                     Flight f = entry.getValue().get(i);
                     Flight c = entry.getValue().get(j);
                     d.addFlight(f);
-                    System.out.println();
                     duties.add(d);
                     Duty dCopy = new Duty();
                     dCopy.addFlight(f);
