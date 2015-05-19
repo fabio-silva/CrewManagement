@@ -34,6 +34,40 @@ public class Pairing {
         return duties;
     }
 
+    public int hashCode(){
+        int hash = 0;
+        for(int i = 0; i < duties.size(); i++){
+            hash += duties.get(i).hashCode();
+        }
+
+        return hash;
+    }
+    public boolean equals(Object obj){
+        if(!(obj instanceof Pairing)){
+            return false;
+        }
+
+        if(((Pairing) obj).duties.size() != this.duties.size()){
+            return false;
+        }
+
+        int counter = 0;
+
+        for(int i = 0; i < duties.size(); i++){
+            for(int j = 0; j < ((Pairing) obj).duties.size(); j++){
+                if(duties.get(i).equals(((Pairing) obj).duties.get(j))){
+                    counter++;
+                    break;
+                }
+            }
+        }
+        if(counter == duties.size()){
+            return true;
+        } else{
+            return false;
+        }
+    }
+
     public long getTimeAwayFromBase() {
         return timeAwayFromBase;
     }
@@ -54,6 +88,25 @@ public class Pairing {
         }
 
         return flights;
+}
+
+    public String getOrigin(){
+        return duties.get(0).getOrigin();
+    }
+
+    public String getDestination(){
+        return duties.get(duties.size()-1).getDestination();
+    }
+
+
+    public String toString(){
+        String res = new String();
+
+        for(int i = 0; i < duties.size(); i++){
+            res += duties.get(i).toString() + "\n";
+        }
+
+        return res;
     }
 
     public double getBiggestFlightTime(){
@@ -69,35 +122,9 @@ public class Pairing {
         return biggestTime;
     }
 
-    public String getOrigin(){
-        return duties.get(0).getOrigin();
-    }
-
-    public String getDestination(){
-        return duties.get(duties.size()-1).getDestination();
-    }
 
     public double getCost() {
         return cost;
-    }
-
-    public boolean equals(Object obj){
-        if(!(obj instanceof Pairing)){
-            return false;
-        }
-
-        if(((Pairing) obj).duties.size() != duties.size()){
-            return false;
-        }
-
-
-        for(int i = 0; i < duties.size(); i++){
-            if (! ((Pairing) obj).duties.get(i).equals(this.duties.get(i))) {
-                return false;
-            }
-        }
-
-        return true;
     }
 
     private void addDuty(Duty d) {
@@ -147,6 +174,11 @@ public class Pairing {
                 if (isFeasible(p))
                     pairings.add(p);
             }
+        }
+
+        for(Pairing p : pairings){
+            System.out.println("-------PAIRING-----------");
+            System.out.println(p);
         }
         return pairings;
     }

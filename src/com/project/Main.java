@@ -119,13 +119,13 @@ public class Main {
 
 
         for(Map.Entry<Integer, ArrayList<Flight>> f : flights.entrySet()){
-            System.out.println("\n\nNew Day");
             for(int i = 0; i < f.getValue().size(); i++){
                 System.out.println("Flight :" + f.getValue().get(i).getFlightId());
 
                 flightLine = new ArrayList<Double>();
                 for(Pairing p : pairingsList){
                     if (p.hasFlight(f.getValue().get(i).getFlightId())){
+                        System.out.println("ADDED 1");
                         flightLine.add(1.0);
                     }
                     else {
@@ -146,8 +146,15 @@ public class Main {
 
         exampleProblem.solve();*/
 
-        GeneticAlgorithm ga = new GeneticAlgorithm(costMatrix, matrix);
-        ga.solve();
+       /* GeneticAlgorithm ga = new GeneticAlgorithm(costMatrix, matrix);
+        ga.solve();*/
+
+        for(int i = 0; i < matrix.size(); i++){
+            for(int j = 0; j < matrix.get(i).size();j++){
+                System.out.print(matrix.get(i).get(j) + " ");
+            }
+            System.out.println();
+        }
 
 
         

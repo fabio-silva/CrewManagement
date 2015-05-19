@@ -37,12 +37,10 @@ public class Duty {
         Duty d = (Duty)obj;
 
         if(!(obj instanceof Duty)){
-            System.out.println("NOT INSTANCE");
             return false;
         }
 
         if(((Duty) obj).flights.size() != this.flights.size()){
-            System.out.println("DIFFERENT SIZE");
             return false;
         }
 
@@ -50,32 +48,21 @@ public class Duty {
 
         for(int i = 0; i < flights.size(); i++){
             for(int j = 0; j < ((Duty) obj).flights.size(); j++){
-               /* if(flights.get(i).getFlightId() == ((Duty) obj).flights.get(j).getFlightId()){*/
                 if(flights.get(i).equals(((Duty) obj).flights.get(j))){
-                    System.out.println(flights.get(i) + " VS " + ((Duty) obj).getFlights().get(j));
-
                     counter++;
                     break;
                 }
             }
         }
         if(counter == flights.size()){
-            System.out.println("ALL FOUND");
             return true;
         } else{
-            System.out.println("ALL NOT FOUND");
             return false;
         }
     }
 
     public int hashCode() {
-        int hash = (int)cost*10;
-        for(int i = 0; i < flights.size(); i++){
-            hash += flights.get(i).getFlightId();
-        }
-
-        System.out.println("HASH = " + hash);
-
+        int hash = firstDate.hashCode() + lastDate.hashCode() + flights.size();
         return hash;
     }
 
@@ -111,10 +98,10 @@ public class Duty {
     public String toString(){
         String res = new String();
         for(int i = 0; i < flights.size(); i++){
-            res.concat(flights.get(i) + "\n");
+            res += " " + flights.get(i);
         }
 
-        return res;
+        return "DUTY :" + res;
     }
     public String getDestination(){
         return flights.get(flights.size()-1).getDestination();
@@ -160,11 +147,10 @@ public class Duty {
 
         cost = Math.max(product, Math.max(flyTime, MIN_GUARANTEED));
 
-        //System.out.println("ELAPSED = " + elapsed + ", FLY = " + flyTime + ", COST = " + cost + ", PRODUCT = " + product);
     }
 
     public static HashSet<Duty> makeDuties(Map<Integer, ArrayList<Flight> > flights){
-        HashSet<Duty> duties = new HashSet<Duty>();
+        ArrayList<Duty> duties = new ArrayList<Duty>();
 
         for(Map.Entry<Integer, ArrayList<Flight>> entry : flights.entrySet()){
             for(int i = 0; i < entry.getValue().size(); i++){
@@ -173,23 +159,17 @@ public class Duty {
                     Flight f = entry.getValue().get(i);
                     Flight c = entry.getValue().get(j);
                     d.addFlight(f);
-                    System.out.println("ADDING(1).....");
-                    if(duties.add(d) == true){
-                        System.out.println("ADDED(1)");
-                    }else{
-                        System.out.println("NOT ADDED(1)");
-                    }
-                    depthSearch(entry.getValue(), f, c, j, d);
-                    System.out.println("ADDING(2).....");
-                    if(duties.add(d) == true){
-                        System.out.println("ADDED(2)");
-                    }else{
-                        System.out.println("NOT ADDED(2)");
-                    }
+                    System.out.println();
+                    duties.add(d);
+                    Duty dCopy = new Duty();
+                    dCopy.addFlight(f);
+                    depthSearch(entry.getValue(), f, c, j, dCopy);
+                    duties.add(dCopy);
                 }
             }
         }
-        return duties;
+
+        return new HashSet<Duty>(duties);
     }
 
     public static void depthSearch(ArrayList<Flight> flights, Flight parent, Flight child, int childCounter, Duty d){
@@ -207,4 +187,5 @@ public class Duty {
                 depthSearch(flights, parent, flights.get(childCounter+1), childCounter+1, d);
         }
     }
+
 }
