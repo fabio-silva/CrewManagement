@@ -41,11 +41,11 @@ public class Main {
                 fileFlights.add(new Flight(parts[0], parts[1], parts[2], parts[3], parts[4], parts[5]));
             }
 
-            reader = new BufferedReader(new FileReader("crew"));
+            /*reader = new BufferedReader(new FileReader("crew"));
             while((line = reader.readLine()) != null){
                 String[] parts = line.split(" ");
                 crew.add(new Person(parts[0], parts[1], Double.parseDouble(parts[2]), Integer.parseInt(parts[3]), parts[4], Integer.parseInt(parts[5])));
-            }
+            }*/
 
         }catch(FileNotFoundException ex){
             System.out.println("Not such file");
@@ -120,12 +120,10 @@ public class Main {
 
         for(Map.Entry<Integer, ArrayList<Flight>> f : flights.entrySet()){
             for(int i = 0; i < f.getValue().size(); i++){
-                System.out.println("Flight :" + f.getValue().get(i).getFlightId());
 
                 flightLine = new ArrayList<Double>();
                 for(Pairing p : pairingsList){
                     if (p.hasFlight(f.getValue().get(i).getFlightId())){
-                        System.out.println("ADDED 1");
                         flightLine.add(1.0);
                     }
                     else {
@@ -142,19 +140,19 @@ public class Main {
 
         System.out.println("GERADO");
 
-        /*Simplex exampleProblem = new Simplex(costMatrix, matrix);
+        //Simplex exampleProblem = new Simplex(costMatrix, matrix);
 
-        exampleProblem.solve();*/
+        //exampleProblem.solve();
 
-       /* GeneticAlgorithm ga = new GeneticAlgorithm(costMatrix, matrix);
-        ga.solve();*/
-
+        GeneticAlgorithm ga = new GeneticAlgorithm(costMatrix, matrix);
+        ga.solve();
+/*
         for(int i = 0; i < matrix.size(); i++){
             for(int j = 0; j < matrix.get(i).size();j++){
                 System.out.print(matrix.get(i).get(j) + " ");
             }
             System.out.println();
-        }
+        }*/
 
 
         

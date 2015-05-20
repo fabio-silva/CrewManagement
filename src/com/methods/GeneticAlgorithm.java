@@ -1,19 +1,15 @@
 package com.methods;
 
-import com.elements.Pairing;
 import com.project.Main;
 
-import java.awt.image.AreaAveragingScaleFilter;
-import java.lang.reflect.Array;
+
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Random;
 import org.apache.commons.math3.distribution.EnumeratedIntegerDistribution;
 
 public class GeneticAlgorithm extends Method{
 
-    final double PENALTY = 0.75;
     private ArrayList<Chromosome> population;
     private int noInitialPopulation;
 
@@ -37,7 +33,7 @@ public class GeneticAlgorithm extends Method{
         return flightSize - coveredFlights;
     }
 
-    public void initialPopulation(){
+    public int initialPopulation(){
         Random r = new Random();
         int firstGene = r.nextInt(Main.pairingsList.size());
         int nextGene;
@@ -54,7 +50,7 @@ public class GeneticAlgorithm extends Method{
                 genes.add(0);
             }
         }
-        System.out.println("added gene");
+
         while(selectedPairings.size() > 0){
             nextGene = r.nextInt(selectedPairings.size());
             genes.set(selectedPairings.get(nextGene), 1);
@@ -64,14 +60,12 @@ public class GeneticAlgorithm extends Method{
         }
 
         int coveredFlights = allFlightsCovered(genes);
-        System.out.println("COVEred = " + coveredFlights);
-        //if(coveredFlights == 0) System.exit(1);
         Chromosome c = new Chromosome(genes);
-        //correctChromosome(c);
-        c.setFit(fitnessCost(c));
+        c.fit(problemMatrix);
+        correctChromosome(c);
         population.add(c);
 
-
+        return coveredFlights;
     }
 
     public void getFlightsForPairing(int pairingIndex, ArrayList<Integer> flights){
@@ -123,6 +117,8 @@ public class GeneticAlgorithm extends Method{
                 }
             }
         }while(!allFlightsCovered);
+
+        //System.out.println("VALUE PAIRING: " + chromosome.getGenes());
     }
 
     public void coverFlight(int flightIndex, Chromosome chromosome){
@@ -137,13 +133,12 @@ public class GeneticAlgorithm extends Method{
         }
 
         if(chosenPairing != -1){
-            System.out.println("COVERING");
+            //System.out.println("COVERING");
             chromosome.getGenes().set(chosenPairing, 1);
         }
     }
 
-    public int noDeadHeadedFlights(Chromosome chromosome){
-        int deadHeadedCounter = 0;
+    public boolean isAvailableSolution(Chromosome chromosome){
         int flightCounter = 0;
 
         for(int i = 0; i < problemMatrix.size(); i++){
@@ -154,26 +149,13 @@ public class GeneticAlgorithm extends Method{
                 }
             }
 
-            if(flightCounter > 1){
-                deadHeadedCounter++;
+            if(flightCounter != 1){
+                return false;
             }
         }
 
-        return deadHeadedCounter;
-    }
+        return true;
 
-
-    public double fitnessCost(Chromosome chromosome){
-        int deadHeadedFlights = 0;
-        double fitness = 0.0;
-
-        for(int i = 0; i < chromosome.getGenes().size(); i++){
-            fitness += Main.pairingsList.get(i).getCost()*chromosome.getGenes().get(i);
-        }
-
-        fitness += (PENALTY*noDeadHeadedFlights(chromosome));
-
-        return fitness;
     }
 
     public ArrayList<Integer> crossover(Chromosome firstChromosome, Chromosome secondChromosome){
@@ -199,7 +181,7 @@ public class GeneticAlgorithm extends Method{
         int genesMutated = r.nextInt(chromosome.getGenes().size()) + 1;
         int[] possibleValues = new int[]{0, 1};
         double zeroProbability = fittest.zeroProbability();
-        System.out.println("zero prob = " + zeroProbability);
+        //System.out.println("zero prob = " + zeroProbability);
         double[] discreteProbabilities = new double[]{zeroProbability, 1-zeroProbability};
         EnumeratedIntegerDistribution distribution = new EnumeratedIntegerDistribution(possibleValues, discreteProbabilities);
         int[] samples = distribution.sample(genesMutated);
@@ -212,9 +194,31 @@ public class GeneticAlgorithm extends Method{
 
     public ArrayList<Double> solve(){
 
+        /*
+
         for(int i = 0; i < noInitialPopulation; i++){
             initialPopulation();
         }
+
+        */
+        int uncovered = 1;
+        int number = 0;
+        int founded = 0;
+
+        while(number < 30){
+            uncovered = initialPopulation();
+            founded++;
+            if(uncovered == 0) {
+                System.out.println("encontrado");
+                number++;
+            }
+        }
+
+
+        System.out.println("INTERATION: " + number + " and founded: " + founded);
+        System.exit(1);
+
+
 
 
         System.out.println("initial");
@@ -222,22 +226,50 @@ public class GeneticAlgorithm extends Method{
         Chromosome parent1, parent2;
         int c = 0;
 
-        while(c < 100){ //Satisfatory solution?
-            parent1 = population.get(0);
-            parent2 = population.get(1);
+        boolean available = false;
+
+        System.out.println("BEST COST BEFORE GENETIC: " + population.get(0).getCost());
+        double bestCost =  population.get(0).getFit();
+        double tempCost = population.get(0).getFit();
+
+        while(!available || bestCost == tempCost){ //Satisfatory solution?
+
+            int[] possibleValues = new int[population.size()];
+            double[] discreteProbabilities = new double[population.size()];
+            for(int i = 0; i < population.size(); i++){
+                possibleValues[i] = i;
+                discreteProbabilities[i] = 1 / population.get(i).getFit();
+            }
+
+            EnumeratedIntegerDistribution distribution = new EnumeratedIntegerDistribution(possibleValues, discreteProbabilities);
+            int[] samples = distribution.sample(2);
+
+            parent1 = population.get(samples[0]);
+            parent2 = population.get(samples[1]);
 
             Chromosome child = new Chromosome(crossover(parent1, parent2));
-            System.out.println("MUTATING");
+            //System.out.println("MUTATING");
             mutate(child);
-            System.out.println("MUTATED");
+            //System.out.println("MUTATED");
             correctChromosome(child);
-            System.out.println("CORRECTED");
-            child.setFit(fitnessCost(child));
+
+            //System.out.println("CORRECTED");
+            child.fit(problemMatrix);
+            System.out.println("CHILD FIT: " +  child.getFit());
+
             population.set(population.size()-1, child);
             Collections.sort(population);
             c++;
+            available = isAvailableSolution(population.get(0));
+            tempCost = population.get(0).getFit();
+            System.out.println(c);
+            System.out.println("BEST cost = " + bestCost);
+            System.out.println("TEMP cost = " + tempCost);
         }
-    System.out.println("BEST = " + population.get(0).getGenes());
-    return null;
+
+        System.out.println("BEST = " + population.get(0).getGenes());
+        System.out.println("BEST COST AFTER GENETIC: " + population.get(0).getFit());
+
+        return null;
     }
 }

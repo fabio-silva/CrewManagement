@@ -128,19 +128,14 @@ public class Pairing {
     }
 
     private void addDuty(Duty d) {
-        System.out.println("------------------");
         if(duties.size() == 0){
             duties.add(d);
             timeAwayFromBase = TimeUnit.MILLISECONDS.toMinutes(d.getLastDate().getTime() - d.getFirstDate().getTime());
         }
         else{
             long timeAwayFromBaseTemp = TimeUnit.MILLISECONDS.toMinutes((d.getLastDate().getTime() - duties.get(duties.size()-1).getFirstDate().getTime()));
-            if(timeAwayFromBaseTemp > TAFB){
-                System.out.println("> TAFB");
-            }
             if(duties.size() < 2 && getOrigin().compareTo(d.getDestination()) == 0 ){
                 duties.add(d);
-                System.out.println("ADD");
                 timeAwayFromBase = timeAwayFromBaseTemp;
             }
             else{
@@ -211,7 +206,7 @@ public class Pairing {
 
         long diffMin = (child.getFirstDate().getTime() - parent.getLastDate().getTime()) / 60000;
 
-        if(parent.getDestination().equals(child.getOrigin()) && diffMin >= 600 && diffMin <= 1080){
+        if(parent.getDestination().equals(child.getOrigin()) && diffMin >= 600 && diffMin <= 1800){
             p.addDuty(child);
             if(childCounter+1 < duties.size())
                 depthSearch(duties, child, duties.get(childCounter+1), childCounter+1, p);
