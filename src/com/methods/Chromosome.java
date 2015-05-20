@@ -8,6 +8,9 @@ import java.util.Objects;
 
 public class Chromosome implements Comparable{
 
+    final long PENALTY = 2000;
+
+
     private ArrayList<Integer> genes;
     private double fit;
 
@@ -53,11 +56,44 @@ public class Chromosome implements Comparable{
     public double getCost(){
         double cost = 0.0;
         for(int i = 0; i < genes.size(); i++){
-            cost += Main.pairingsList.get(i).getCost();
+            if(genes.get(i) == 1) {
+                cost += Main.pairingsList.get(i).getCost();
+            }
         }
 
         return cost;
     }
 
+
+    public void fit(ArrayList<ArrayList<Double>> problemMatrix) {
+        double fitness = 0.0;
+
+        for(int i = 0; i < genes.size(); i++){
+            fitness += Main.pairingsList.get(i).getCost()*genes.get(i);
+        }
+
+        fitness += (PENALTY*noDeadHeadedFlights(problemMatrix));
+
+        fit = fitness;
+    }
+
+    public int noDeadHeadedFlights(ArrayList<ArrayList<Double>> problemMatrix){
+        int deadHeadedCounter = 0;
+        int flightCounter = 0;
+
+        for(int i = 0; i < problemMatrix.size(); i++){
+            flightCounter = 0;
+            for(int j = 0; j < problemMatrix.get(i).size(); j++){
+                if(Math.round(problemMatrix.get(i).get(j)) == 1 && genes.get(j) == 1){
+                    ++flightCounter;
+                }
+            }
+            if(flightCounter > 1 || flightCounter == 0){
+                deadHeadedCounter++;
+            }
+        }
+
+        return deadHeadedCounter;
+    }
 
 }
