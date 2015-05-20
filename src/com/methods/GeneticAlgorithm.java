@@ -209,7 +209,7 @@ public class GeneticAlgorithm extends Method{
             uncovered = initialPopulation();
             founded++;
             if(uncovered == 0) {
-                System.out.println("encontrado");
+                System.out.println("enconwvdactrado");
                 number++;
             }
         }
