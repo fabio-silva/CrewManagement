@@ -1,5 +1,6 @@
 package com.methods;
 
+import com.elements.Pairing;
 import com.project.Main;
 
 
@@ -11,12 +12,10 @@ import org.apache.commons.math3.distribution.EnumeratedIntegerDistribution;
 public class GeneticAlgorithm extends Method{
 
     private ArrayList<Chromosome> population;
-    private int noInitialPopulation;
 
     public GeneticAlgorithm(ArrayList<Double> costMatrix, ArrayList<ArrayList<Double>> problemMatrix){
         super(costMatrix, problemMatrix);
         population = new ArrayList<Chromosome>();
-        noInitialPopulation = 100;
     }
 
     public int allFlightsCovered(ArrayList<Integer>gene){
@@ -33,7 +32,7 @@ public class GeneticAlgorithm extends Method{
         return flightSize - coveredFlights;
     }
 
-    public int initialPopulation(){
+    public Chromosome initialPopulation(){
         Random r = new Random();
         int firstGene = r.nextInt(Main.pairingsList.size());
         int nextGene;
@@ -63,9 +62,8 @@ public class GeneticAlgorithm extends Method{
         Chromosome c = new Chromosome(genes);
         c.fit(problemMatrix);
         correctChromosome(c);
-        population.add(c);
 
-        return coveredFlights;
+        return c;
     }
 
     public void getFlightsForPairing(int pairingIndex, ArrayList<Integer> flights){
@@ -201,19 +199,31 @@ public class GeneticAlgorithm extends Method{
         }
 
         */
-        int uncovered = 1;
+        int uncovered;
         int number = 0;
         int founded = 0;
+        Chromosome temp;
 
-        while(number < 30){
-            uncovered = initialPopulation();
-            founded++;
+        ArrayList<Pairing> pairingList = new ArrayList<Pairing>(Main.pairingsList);
+
+        while(number < 20){
+            temp = initialPopulation();
+            uncovered = allFlightsCovered(temp.getGenes());
             if(uncovered == 0) {
-                System.out.println("enconwvdactrado");
+                population.add(temp);
                 number++;
             }
         }
 
+        int unusedPairing = removePairing(pairingList);
+
+        if(unusedPairing != -1){
+            pairingList.remove(unusedPairing);
+
+        }
+        else {
+
+        }
 
         System.out.println("INTERATION: " + number + " and founded: " + founded);
         System.exit(1);
@@ -271,5 +281,22 @@ public class GeneticAlgorithm extends Method{
         System.out.println("BEST COST AFTER GENETIC: " + population.get(0).getFit());
 
         return null;
+    }
+
+    private int removePairing(ArrayList<Pairing> pairingList) {
+        boolean contain = false;
+
+        for(int i = 0; i < pairingList.size(); i++){
+            for(int j = 0; j < population.size(); j++){
+                if(population.get(j).getGenes().get(i) == 1){
+                    contain = true;
+                }
+            }
+            if(!contain){
+                return i;
+            }
+        }
+
+        return -1;
     }
 }

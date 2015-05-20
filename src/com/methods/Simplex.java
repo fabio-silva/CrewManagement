@@ -1,6 +1,9 @@
 package com.methods;
 
+import com.sun.tools.javac.util.ArrayUtils;
+
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -14,7 +17,6 @@ public class Simplex extends  Method{
     }
 
     public ArrayList<Double> solve(){
-        ArrayList<Double> solution = new ArrayList<Double>();
 
         System.out.println("binary matrix\n\n");
         constructProblem(); // contruct problem binary matrix
@@ -25,13 +27,30 @@ public class Simplex extends  Method{
         System.out.println("reverse last line\n\n");
         //reverseLastLine();
 
-        solution = matrixMethod();
+        matrixMethod();
 
+
+
+       /*for (int i = 0; i < problemMatrix.size(); i++){
+            for (int j = 0; j < problemMatrix.get(i).size(); j++){
+                System.out.printf("%-7.2f", problemMatrix.get(i).get(j));
+            }
+            System.out.println();
+        }
+        */
+
+        int lines = problemMatrix.size();
+        int columns = problemMatrix.get(0).size();
+
+
+        List solutionList = problemMatrix.get(lines - 1).subList(columns - lines ,columns);
+
+        ArrayList<Double> solution = new ArrayList<Double>(solutionList);
 
         return solution;
     }
 
-    private ArrayList<Double> matrixMethod() {
+    private void matrixMethod() {
 /*
         for (int i = 0; i < problemMatrix.size(); i++){
             for (int j = 0; j < problemMatrix.get(i).size(); j++){
@@ -64,9 +83,6 @@ public class Simplex extends  Method{
         }
 
         System.out.println("FINAL");
-
-
-        return null;
     }
 
     private void constructNextStep(int column, int line) {

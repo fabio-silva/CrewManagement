@@ -6,6 +6,7 @@ import com.elements.Flight;
 import com.elements.Pairing;
 import com.methods.Assignment;
 import com.methods.GeneticAlgorithm;
+import com.methods.HybridMethod;
 import com.methods.Simplex;
 
 import java.io.BufferedReader;
@@ -29,7 +30,7 @@ public class Main {
         ArrayList< Flight > fileFlights = new ArrayList<Flight>();
         crew = new ArrayList<Person>();
 
-        for(int i = 1; i <= 7; i++){  // CHAGE TO 28
+        for(int i = 1; i <= 28; i++){  // CHAGE TO 28
             flights.put(i, new ArrayList<Flight>());
         }
 
@@ -56,16 +57,16 @@ public class Main {
         int flightId = 0;
         for(int i = 0; i < 7; i++){
             ArrayList<Flight> firstWeekFlights = flights.get(i + 1);
-            //ArrayList<Flight> secondWeekFlights = flights.get((i + 1) + 7);
-            //ArrayList<Flight> thirdWeekFlights = flights.get((i + 1) + 14);
-            //ArrayList<Flight> fourthWeekFlights = flights.get((i + 1) + 21);
+            ArrayList<Flight> secondWeekFlights = flights.get((i + 1) + 7);
+            ArrayList<Flight> thirdWeekFlights = flights.get((i + 1) + 14);
+            ArrayList<Flight> fourthWeekFlights = flights.get((i + 1) + 21);
 
             for(int k = 0; k < fileFlights.size(); k++){
                 if(fileFlights.get(k).getOperatingDays().get(i) == 1){
                     firstWeekFlights.add(new Flight(fileFlights.get(k)));
-                    //secondWeekFlights.add(new Flight(fileFlights.get(k)));
-                    //thirdWeekFlights.add(new Flight(fileFlights.get(k)));
-                    //fourthWeekFlights.add(new Flight(fileFlights.get(k)));
+                    secondWeekFlights.add(new Flight(fileFlights.get(k)));
+                    thirdWeekFlights.add(new Flight(fileFlights.get(k)));
+                    fourthWeekFlights.add(new Flight(fileFlights.get(k)));
                 }
             }
 
@@ -73,7 +74,7 @@ public class Main {
                 firstWeekFlights.get(k).setDayOfMonth(i + 1, flightId);
                 flightId++;
             }
-            /*for(int k = 0; k < secondWeekFlights.size(); k++){
+            for(int k = 0; k < secondWeekFlights.size(); k++){
                 secondWeekFlights.get(k).setDayOfMonth((i + 1) + 7, flightId);
                 flightId++;
             }
@@ -84,7 +85,7 @@ public class Main {
             for(int k = 0; k < fourthWeekFlights.size(); k++){
                 fourthWeekFlights.get(k).setDayOfMonth((i + 1) + 21, flightId);
                 flightId++;
-            }*/
+            }
         }
 
       /*  for(int i = 1; i <= 28; i++){
@@ -140,42 +141,30 @@ public class Main {
 
         System.out.println("GERADO");
 
-        //Simplex exampleProblem = new Simplex(costMatrix, matrix);
+        long start = System.currentTimeMillis();
 
-        //exampleProblem.solve();
 
-        GeneticAlgorithm ga = new GeneticAlgorithm(costMatrix, matrix);
-        ga.solve();
+
+        Simplex exampleProblem = new Simplex(costMatrix, matrix);
+
+        ArrayList<Double> simplexSolution = exampleProblem.solve();
+
+        System.out.println("Solução com simplex: " + simplexSolution);
+
 /*
-        for(int i = 0; i < matrix.size(); i++){
-            for(int j = 0; j < matrix.get(i).size();j++){
-                System.out.print(matrix.get(i).get(j) + " ");
-            }
-            System.out.println();
-        }*/
 
 
-        
+        HybridMethod hm = new HybridMethod(costMatrix, matrix);
+        ArrayList<Double> hybridSolution = hm.solve();
 
-        //Assignment assignment = new Assignment(pairingsList, crew);
-
-        /*
-        ArrayList<Double> costMatrix = new ArrayList<Double>(Arrays.asList(30.0, 40.0, 20.0, 10.0, 25.0));
-
-        ArrayList<ArrayList<Double>> problemMatrix = new ArrayList<ArrayList<Double>>(Arrays.asList(
-                new ArrayList<Double>(Arrays.asList(1.0, 1.0, 0.0, 0.0, 1.0)),
-                new ArrayList<Double>(Arrays.asList(1.0, 0.0, 1.0, 0.0, 0.0)),
-                new ArrayList<Double>(Arrays.asList(0.0, 1.0, 1.0, 0.0, 0.0)),
-                new ArrayList<Double>(Arrays.asList(1.0, 0.0, 0.0, 1.0, 1.0)),
-                new ArrayList<Double>(Arrays.asList(0.0, 1.0, 1.0, 0.0, 0.0))
-        ));
+        System.out.println("Solução com hybrid: " + hybridSolution);
 
 
-        Simplex exampleProblem = new Simplex(costMatrix, problemMatrix);
+*/
+        long elapsed = System.currentTimeMillis() - start;
 
-        exampleProblem.solve();
+        System.out.println("elapsed time: " + elapsed/1000f);
 
-        */
     }
 
     public static boolean hasFlight(Duty d){

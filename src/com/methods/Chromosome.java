@@ -13,9 +13,15 @@ public class Chromosome implements Comparable{
 
     private ArrayList<Integer> genes;
     private double fit;
+    private double cost;
 
     public Chromosome(ArrayList<Integer> genes){
         this.genes = genes;
+    }
+
+    public Chromosome() {
+        this.cost = 0;
+
     }
 
     public double getFit(){
@@ -60,6 +66,8 @@ public class Chromosome implements Comparable{
                 cost += Main.pairingsList.get(i).getCost();
             }
         }
+
+        this.cost = cost;
 
         return cost;
     }
