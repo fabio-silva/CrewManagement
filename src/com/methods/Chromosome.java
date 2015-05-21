@@ -21,7 +21,10 @@ public class Chromosome implements Comparable{
 
     public Chromosome() {
         this.cost = 0;
+    }
 
+    public void setGenes(ArrayList<Integer> genes){
+        this.genes = genes;
     }
 
     public double getFit(){

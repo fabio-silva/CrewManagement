@@ -2,6 +2,7 @@ package com.methods;
 
 import com.sun.tools.javac.util.ArrayUtils;
 
+import java.awt.image.AreaAveragingScaleFilter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -276,7 +277,23 @@ public class Simplex extends  Method{
         problemMatrix.addAll(auxiliarMatrix);
         costMatrix.add(0.0);
 
-        problemMatrix.add(costMatrix);
+
+
+        //   SEM MATRIZ DE CUSTOS
+        ArrayList<Double> nullCost = new ArrayList<Double>();
+        for(int i = 0; i < costMatrix.size(); i++){
+            nullCost.add(0.0);
+        }
+        problemMatrix.add(nullCost);
+
+
+
+
+        //   COM MATRIZ DE CUSTOS
+
+        //problemMatrix.add(costMatrix);
+
+
 /*
         for (int i = 0; i < problemMatrix.size(); i++){
             for (int j = 0; j < problemMatrix.get(i).size(); j++){

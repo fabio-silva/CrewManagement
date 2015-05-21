@@ -13,10 +13,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
 
 public class Main {
     public static ArrayList<Pairing> pairingsList;
@@ -36,7 +33,7 @@ public class Main {
 
         try {
             String line;
-            BufferedReader reader = new BufferedReader(new FileReader("flightSchedule_min"));
+            BufferedReader reader = new BufferedReader(new FileReader("flightSchedule_medium"));
             while((line = reader.readLine()) != null){
                 String[] parts = line.split(" ");
                 fileFlights.add(new Flight(parts[0], parts[1], parts[2], parts[3], parts[4], parts[5]));
@@ -88,12 +85,13 @@ public class Main {
             }
         }
 
-      /*  for(int i = 1; i <= 28; i++){
-            System.out.println("------------------DAY " + i + "------------------------");
-            for(int j = 0; j < flights.get(i).size(); j++){
-                System.out.println(flights.get(i).get(j).getOrigin() + " -> " + flights.get(i).get(j).getDestination() + ", DEPARTURE = " + flights.get(i).get(j).getDepartureTime() + ", " + flights.get(i).get(j).getArrivalTime());
-            }
-        }*/
+        int numberOfFlights = 0;
+
+        for(int i = 1; i <= 28; i++){
+            numberOfFlights += flights.get(i).size();
+        }
+
+        System.out.println("Number of flights: " + numberOfFlights);
 
         duties = Duty.makeDuties(flights);
 
@@ -141,26 +139,28 @@ public class Main {
 
         System.out.println("GERADO");
 
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Choose method: \n1 - Simplex\n2 - HillClimbing");
+        String choose = sc.nextLine();
+
+
         long start = System.currentTimeMillis();
 
+        if (choose.compareTo("1") == 0){
+            Simplex exampleProblem = new Simplex(costMatrix, matrix);
+
+            ArrayList<Double> simplexSolution = exampleProblem.solve();
+
+            System.out.println("Solução com simplex: " + simplexSolution);
+        }
+        else{
+            HybridMethod hm = new HybridMethod(costMatrix, matrix);
+            ArrayList<Double> hybridSolution = hm.solve();
+
+            System.out.println("Solução com hybrid: " + hybridSolution);
+        }
 
 
-        Simplex exampleProblem = new Simplex(costMatrix, matrix);
-
-        ArrayList<Double> simplexSolution = exampleProblem.solve();
-
-        System.out.println("Solução com simplex: " + simplexSolution);
-
-/*
-
-
-        HybridMethod hm = new HybridMethod(costMatrix, matrix);
-        ArrayList<Double> hybridSolution = hm.solve();
-
-        System.out.println("Solução com hybrid: " + hybridSolution);
-
-
-*/
         long elapsed = System.currentTimeMillis() - start;
 
         System.out.println("elapsed time: " + elapsed/1000f);
