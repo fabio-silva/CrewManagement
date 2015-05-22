@@ -280,18 +280,20 @@ public class Simplex extends  Method{
 
 
         //   SEM MATRIZ DE CUSTOS
+        //
+        /*
         ArrayList<Double> nullCost = new ArrayList<Double>();
         for(int i = 0; i < costMatrix.size(); i++){
             nullCost.add(0.0);
         }
         problemMatrix.add(nullCost);
 
-
+*/
 
 
         //   COM MATRIZ DE CUSTOS
 
-        //problemMatrix.add(costMatrix);
+        problemMatrix.add(costMatrix);
 
 
 /*

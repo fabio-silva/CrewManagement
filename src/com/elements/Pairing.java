@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-public class Pairing {
+public class Pairing implements Comparable{
 
     final static int MAX_DUTIES = 3;
     final static double MIN_REST = 10.0;
@@ -70,6 +70,12 @@ public class Pairing {
 
     public long getTimeAwayFromBase() {
         return timeAwayFromBase;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        int otherNumberOfFlights = ((Pairing)o).getFlights().size();
+        return Integer.compare(otherNumberOfFlights, this.getFlights().size());
     }
 
     public Date getFirstDate(){

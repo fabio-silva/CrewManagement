@@ -17,12 +17,12 @@ public class State {
     private ArrayList<Pairing> allPairings; // todos os pairings gerados
     private ArrayList<ArrayList<Double>> problemMatrix;
 
-    public State(ArrayList<Integer> availablePairings, ArrayList<Integer> coveredFlights, ArrayList<ArrayList<Double>> problemMatrix) {
+    public State(ArrayList<Integer> availablePairings, ArrayList<Integer> coveredFlights, ArrayList<ArrayList<Double>> problemMatrix, ArrayList<Pairing> paringsList) {
 
         this.coveredFlights = new ArrayList<Integer>(coveredFlights);
         this.availablePairings = new ArrayList<Integer>(availablePairings);
         this.selectedPairings = new ArrayList<Integer>();
-        allPairings = new ArrayList<Pairing>(Main.pairingsList);
+        this.allPairings = new ArrayList<Pairing>(paringsList);
         this.problemMatrix = problemMatrix;
         this.chomosome = new ArrayList<Integer>(Collections.nCopies(allPairings.size(), 0));
     }
@@ -31,7 +31,7 @@ public class State {
         this.coveredFlights = new ArrayList<Integer>(state.getCoveredFlights());
         this.availablePairings = new ArrayList<Integer>(state.getAvailablePairings());
         this.selectedPairings = new ArrayList<Integer>(state.getSelectedPairings());
-        allPairings = new ArrayList<Pairing>(Main.pairingsList);
+        this.allPairings = new ArrayList<Pairing>(state.getAllPairings());
         this.problemMatrix = state.getProblemMatrix();
         this.chomosome = new ArrayList<Integer>(state.getChomosome());
     }

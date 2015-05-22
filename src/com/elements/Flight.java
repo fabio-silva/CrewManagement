@@ -125,7 +125,8 @@ public class Flight {
     }
 
     public String toString(){
-        return origin +"->" + destination + ", " + departureTime + "->" + arrivalTime + ", " + dayOfMonth;
+        return flightId + "";
+        //return origin +"->" + destination + ", " + departureTime + "->" + arrivalTime + ", " + dayOfMonth;
     }
 
 }

@@ -33,7 +33,7 @@ public class Main {
 
         try {
             String line;
-            BufferedReader reader = new BufferedReader(new FileReader("flightSchedule_medium"));
+            BufferedReader reader = new BufferedReader(new FileReader("flightSchedule_min"));
             while((line = reader.readLine()) != null){
                 String[] parts = line.split(" ");
                 fileFlights.add(new Flight(parts[0], parts[1], parts[2], parts[3], parts[4], parts[5]));

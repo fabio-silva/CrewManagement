@@ -1,20 +1,17 @@
 package com.methods;
 
 
+import com.elements.Flight;
 import com.elements.Pairing;
 import com.project.Main;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Random;
+import java.util.*;
 
 public class HybridMethod extends Method{
 
     private ArrayList<Chromosome> population;
     private ArrayList<Pairing> selectedPairings;
     private Chromosome finalChromosome;
-    HashMap<Integer, Integer> choosePairing;
 
     public HybridMethod(ArrayList<Double> costMatrix, ArrayList<ArrayList<Double>> problemMatrix){
 
@@ -22,99 +19,29 @@ public class HybridMethod extends Method{
         population = new ArrayList<Chromosome>();
         selectedPairings = new ArrayList<Pairing>(Main.pairingsList);
         finalChromosome = new Chromosome();
-        choosePairing = new HashMap<Integer, Integer>();
-
-
-        for(int i = 0; i < selectedPairings.size(); i++){
-            choosePairing.put(i, 0);
-        }
     }
 
-    public void coverFlight(int flightIndex, Chromosome chromosome){
-        double minCost = Double.POSITIVE_INFINITY;
-        int chosenPairing = -1;
+    public int allFlightsCovered(ArrayList<Integer> gene, ArrayList<Pairing> pairingsList){
+        HashSet<Integer> flights = new HashSet<Integer>();
 
-        for(int i = 0; i < selectedPairings.size(); i++){
-            if(selectedPairings.get(i).hasFlight(flightIndex) && selectedPairings.get(i).getCost() < minCost){
-                minCost = selectedPairings.get(i).getCost();
-                chosenPairing = i;
+        for(Pairing p : pairingsList) {
+            for(Flight f : p.getFlights()){
+                flights.add(f.getFlightId());
             }
         }
 
-        if(chosenPairing != -1){
-            //System.out.println("COVERING");
-            chromosome.getGenes().set(chosenPairing, 1);
-        }
-    }
-
-    public void correctChromosome(Chromosome chromosome){
-        boolean allFlightsCovered = true;
-
-        do {
-            allFlightsCovered = true;
-            //System.out.println("DO");
-            //System.out.println(chromosome.getGenes());
-            for (int i = 0; i < problemMatrix.size(); i++) {
-                int flightCounter = 0;
-
-                for (int j = 0; j < chromosome.getGenes().size(); j++) {
-                    if (chromosome.getGenes().get(j) == 1 && problemMatrix.get(i).get(j).intValue() == 1) {
-                        flightCounter++;
-                    }
-                }
-
-                if (flightCounter < 1) { //Flight not covered exactly once
-                    allFlightsCovered = false;
-                    coverFlight(i, chromosome);
-                    // System.out.println(chromosome.getGenes());
-                    //System.out.println("CORRECTiNG FLIGght " + i);
-                    //System.exit(1);
-                }
-            }
-        }while(!allFlightsCovered);
-
-        //System.out.println("VALUE PAIRING: " + chromosome.getGenes());
-    }
-
-    public int allFlightsCovered(ArrayList<Integer>gene){
-        int flightSize = problemMatrix.size();
+        int flightSize = flights.size();
         int coveredFlights = 0;
 
-        for(int i = 0; i < selectedPairings.size(); i++){
+        for(int i = 0; i < pairingsList.size(); i++){
             if(gene.get(i) == 1){
-                coveredFlights += selectedPairings.get(i).getFlights().size();
+                coveredFlights += pairingsList.get(i).getFlights().size();
             }
         }
-
-
         return flightSize - coveredFlights;
     }
 
-    public void getFlightsForPairing(int pairingIndex, ArrayList<Integer> flights){
-        for(int i = 0; i < problemMatrix.size(); i++){
-            if(selectedPairings.get(pairingIndex).hasFlight(i)){
-                flights.add(i);
-            }
-        }
-    }
-
-    public void getPairingsWithDifferentFlights(ArrayList<Integer> flights, ArrayList<Integer> pairings){
-        boolean hasFlight;
-        for(int i = 0; i < selectedPairings.size(); i++){
-            hasFlight = false;
-            for(int j = 0; j < flights.size(); j++){
-                if(selectedPairings.get(i).hasFlight(flights.get(j))){
-                    hasFlight = true;
-                    break;
-                }
-            }
-            if(hasFlight == false){
-                pairings.add(i);
-            }
-        }
-    }
-
-    public Chromosome initialPopulation(){
+    public Chromosome initialPopulation(ArrayList<Pairing> pairingsList){
 
         ArrayList<State> states = new ArrayList<State>();
         ArrayList<Integer> availablePairings = new ArrayList<Integer>();
@@ -122,11 +49,11 @@ public class HybridMethod extends Method{
 
         int exitProbability;
 
-        for(int i = 0; i < selectedPairings.size(); i++){
+        for(int i = 0; i < pairingsList.size(); i++){
             availablePairings.add(i);
         }
 
-        State state = new State(availablePairings,new ArrayList<Integer>(), problemMatrix);
+        State state = new State(availablePairings,new ArrayList<Integer>(), problemMatrix, pairingsList);
 
         Random r = new Random();
         int randomPairing = r.nextInt(availablePairings.size());
@@ -134,7 +61,7 @@ public class HybridMethod extends Method{
         c.setGenes(new ArrayList<Integer>(state.getChomosome()));
         states.add(new State(state));
 
-        while(allFlightsCovered(c.getGenes()) != 0){
+        while(allFlightsCovered(c.getGenes(), pairingsList) != 0){
             if(pairingsLeft > 0){
                 randomPairing = r.nextInt(state.getAvailablePairings().size());
                 pairingsLeft = state.chooseAPairing(randomPairing);
@@ -144,17 +71,17 @@ public class HybridMethod extends Method{
             else{
                 exitProbability = r.nextInt(100);
                 if(exitProbability > 90){  // in Hillclimbing prevent local minimums
-                    return null;
+                    return c;
                 }
                 states.remove(states.size() - 1);
                 if (states.size() == 0){
-                    return null;
+                    return c;
                 }
                 state = states.get(states.size() - 1);
                 while(state.getAvailablePairings().size() < 1){
                     states.remove(states.size() - 1);
                     if (states.size() == 0){
-                        return null;
+                        return c;
                     }
                     state = states.get(states.size() - 1);
                 }
@@ -167,14 +94,6 @@ public class HybridMethod extends Method{
         System.out.println("CONSEGUIU");
         System.out.println(c.getGenes() + " - " + c.getCost() );
 
-
-
-
-        //int coveredFlights = allFlightsCovered(genes);
-        //Chromosome c = new Chromosome(genes);
-        //correctChromosome(c);
-        //c.fit(problemMatrix);
-
         return c;
     }
 
@@ -183,8 +102,30 @@ public class HybridMethod extends Method{
     @Override
     public ArrayList<Double> solve() {
 
+        ArrayList<ArrayList<Pairing>> pairingsDivided = pairingsFromFlights();
+        double totalCost = 0;
+        Chromosome solution;
+        int genesLeft;
 
 
+
+        for (ArrayList<Pairing> pairingArray : pairingsDivided) {
+            solution = initialPopulation(pairingArray);
+            genesLeft = allFlightsCovered(solution.getGenes(), pairingArray);
+
+            while(genesLeft != 0){
+                System.out.println("Unavailable solution founded - " + genesLeft);
+                solution = initialPopulation(pairingArray);
+                genesLeft = allFlightsCovered(solution.getGenes(), pairingArray);
+            }
+
+            totalCost = solution.getCost();
+            System.out.println("Available solution FONDED: " + solution.getCost() + "--------------------------------");
+
+        }
+
+        System.out.println("TOTAL: " + totalCost);
+/*
         Chromosome solution = initialPopulation();
         int j = 0;
 
@@ -194,123 +135,58 @@ public class HybridMethod extends Method{
             solution = initialPopulation();
         }
 
-        return null;/*
+        */
 
-        ArrayList<Double> res = new ArrayList<Double>();
-
-        for(int i = 0; i < finalChromosome.getGenes().size(); i++){
-            res.add(i, Double.valueOf(finalChromosome.getGenes().get(i)));
-        }
-
-        res.add(solution.getCost());
-
-        return res;*/
-
-        /*
-
-        auxiliarSolveFunction();
-
-        System.out.println("FINAL chromosome: " + finalChromosome.getGenes() + "  -  " + finalChromosome.getCost());
-        if(allFlightsCovered(finalChromosome.getGenes()) == 0){
-            System.out.println("Valid Solution");
-        }
-
-
-        ArrayList<Double> solution = new ArrayList<Double>();
-
-        for(int i = 0; i < finalChromosome.getGenes().size(); i++){
-            solution.add(i, Double.valueOf(finalChromosome.getGenes().get(i)));
-        }
-
-        return solution;*/
+        return null;
     }
 
-    public void auxiliarSolveFunction(Chromosome bestChromosome){
+    private ArrayList<ArrayList<Pairing>> pairingsFromFlights() {
+        ArrayList<Pairing> pairings = new ArrayList<Pairing>(selectedPairings);
+        ArrayList<ArrayList<Pairing>> res = new ArrayList<ArrayList<Pairing>>();
+        Collections.sort(pairings);
+        int i;
+        boolean added;
 
-        int uncovered;
-        int number = 0;
-        int founded = 0;
-        Chromosome temp;
+        System.out.println("size: " + pairings.get(0).getFlights().size());
 
-        while(number < 15){
-            temp = initialPopulation();
-            uncovered = allFlightsCovered(temp.getGenes());
-            if(uncovered == 0) {
-                System.out.println("iteracao");
-                population.add(temp);
-                Collections.sort(population);
-                number++;
-            }
-            System.out.println("nop");
-        }
+        while(pairings.size() != 0){
+            i = 0;
+            ArrayList<Pairing> destination = new ArrayList<Pairing>();
+            destination.add(pairings.get(0));
+            pairings.remove(0);
 
-        int unusedPairing = removePairing();
-
-        if(unusedPairing != -1){
-            System.out.println("outra");
-            selectedPairings.remove(unusedPairing);
-            if (bestChromosome.getCost() > population.get(0).getCost()){
-                auxiliarSolveFunction(bestChromosome);
-            }
-            else{
-                auxiliarSolveFunction(population.get(0));
-            }
-        }
-        else {
-            finalChromosome = bestChromosome;
-        }
-
-    }
-
-    public void auxiliarSolveFunction() {
-
-        int uncovered;
-        int number = 0;
-        int founded = 0;
-        Chromosome temp;
-
-        while (number < 15) {
-            temp = initialPopulation();
-            uncovered = allFlightsCovered(temp.getGenes());
-            if (uncovered == 0) {
-                System.out.println("iteracao");
-                population.add(temp);
-                Collections.sort(population);
-                number++;
-            }
-            System.out.println("nop");
-
-        }
-
-
-        int unusedPairing = removePairing();
-
-        if (unusedPairing != -1) {
-            System.out.println("outra");
-            selectedPairings.remove(unusedPairing);
-            auxiliarSolveFunction(population.get(0));
-        } else {
-            finalChromosome = population.get(0);
-        }
-    }
-
-
-    private int removePairing() {
-        boolean contain = false;
-
-        for(int i = 0; i < selectedPairings.size(); i++){
-            for(int j = 0; j < population.size(); j++){
-                if(population.get(j).getGenes().get(i) == 1){
-                    contain = true;
+            while(i < pairings.size()){
+                added = false;
+                for (int j = 0 ; j < destination.size(); j++){
+                    if(hasCommonFlights(pairings.get(i), destination.get(j))) {
+                        destination.add(pairings.get(i));
+                        pairings.remove(i);
+                        added = true;
+                        break;
+                    }
+                }
+                if(!added){
+                    i++;
                 }
             }
-            if(!contain){
-                return i;
+            res.add(new ArrayList<Pairing>(destination));
+        }
+
+
+        return res;
+
+    }
+
+    private boolean hasCommonFlights(Pairing pairing, Pairing pairing1) {
+        ArrayList<Flight> pairingFlights = pairing.getFlights();
+
+        for (int i = 0; i < pairingFlights.size(); i++) {
+            if(pairing1.hasFlight(pairingFlights.get(i).getFlightId())) {
+                return true;
             }
         }
 
-        return -1;
+        return false;
     }
-
 
 }
