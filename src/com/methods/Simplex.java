@@ -1,34 +1,31 @@
 package com.methods;
 
-import com.sun.tools.javac.util.ArrayUtils;
+import com.elements.Pairing;
 
-import java.awt.image.AreaAveragingScaleFilter;
 import java.util.*;
 
 public class Simplex extends  Method{
 
+    ArrayList<Pairing> pairings;
 
-    public Simplex(ArrayList<Double> costMatrix, ArrayList<ArrayList<Double>> problemMatrix) {
+    public Simplex(ArrayList<Double> costMatrix, ArrayList<ArrayList<Double>> problemMatrix, ArrayList<Pairing> pairings) {
         super(costMatrix, problemMatrix);
+        this.pairings = pairings;
     }
 
-    public ArrayList<Double> solve(){
+    public ArrayList<Pairing> solve(){
 
-        System.out.println("binary matrix\n\n");
+        ArrayList<Pairing> solutionParings = new ArrayList<Pairing>();
+
         constructProblem();
-        System.out.println("dual matrix\n\n");
         constructDualProblem();
-        System.out.println("Add slack variables to matrix\n\n");
         addSlackVariables();
-        System.out.println("reverse last line\n\n");
 
 
         ArrayList<ArrayList<Double>> problemMatrixAux = new ArrayList<ArrayList<Double>>(problemMatrix);
 
         boolean solved = matrixMethod();
         while(!solved) {
-            //Scanner s = new Scanner(System.in);
-            //s.nextLine();
             problemMatrix = new ArrayList<ArrayList<Double>>(problemMatrixAux);
             solved = matrixMethod();
         }
@@ -36,19 +33,24 @@ public class Simplex extends  Method{
         int lines = problemMatrix.size();
         int columns = problemMatrix.get(0).size();
 
-
         List solutionList = problemMatrix.get(lines - 1).subList(columns - lines ,columns);
 
         ArrayList<Double> solution = new ArrayList<Double>(solutionList);
 
-        return solution;
+        System.out.println(solution);
+
+        for (int i = 0; i < solutionList.size(); i++) {
+            if (solution.get(i) == -1.0) {
+                solutionParings.add(this.pairings.get(i));
+            }
+        }
+
+        return solutionParings;
     }
 
     private boolean matrixMethod() {
         HashMap<Integer, Integer> lineTimes = new HashMap<Integer, Integer>();
-
         int column = chooseColumnPivot();
-        Scanner sc = new Scanner(System.in);
         int line;
 
         while (column != -1){
@@ -65,19 +67,12 @@ public class Simplex extends  Method{
             else {
                 lineTimes.put(line, 1);
             }
-
-            System.out.println("Line: " + line);
-            System.out.println("Column: " + column);
-
             if (line != -1) {
                 constructNextStep(column, line);
-                System.out.println("encontrou");
             }
             column = chooseColumnPivot();
-            //sc.next();
         }
 
-        System.out.println("FINAL");
         return true;
     }
 

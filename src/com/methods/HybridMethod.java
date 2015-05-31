@@ -93,16 +93,14 @@ public class HybridMethod extends Method{
             }
         }
 
-        System.out.println("CONSEGUIU");
-        System.out.println(c.getGenes() + " - " + c.getCost() );
-
         return c;
     }
 
     @Override
-    public ArrayList<Double> solve() {
+    public ArrayList<Pairing> solve() {
 
         ArrayList<ArrayList<Pairing>> pairingsDivided = pairingsFromFlights();
+        ArrayList<Pairing> pairingsSolution = new ArrayList<Pairing>();
 
         for(ArrayList<Pairing> p : pairingsDivided){
             for (Pairing pai : p ){
@@ -111,12 +109,8 @@ public class HybridMethod extends Method{
             System.out.println("\n\n\n");
         }
 
-
-        double totalCost = 0;
         Chromosome solution;
         int genesLeft;
-
-
 
         for (ArrayList<Pairing> pairingArray : pairingsDivided) {
             solution = initialPopulation(pairingArray);
@@ -128,23 +122,36 @@ public class HybridMethod extends Method{
                 genesLeft = allFlightsCovered(solution.getGenes(), pairingArray);
             }
 
-            totalCost = solution.getCost();
+            pairingsSolution.addAll(getPairingsFromGenes(pairingArray, solution));
+
             System.out.println("Available solution FONDED: " + solution.getCost() + "--------------------------------");
 
         }
 
-        return null;
+        return pairingsSolution;
     }
 
-    public ArrayList<Double> simplexHybrid() {
+    private Collection<? extends Pairing> getPairingsFromGenes(ArrayList<Pairing> pairingArray, Chromosome solution) {
+        ArrayList<Integer> genes = solution.getGenes();
+        ArrayList<Pairing> pairingSolution = new ArrayList<Pairing>();
+
+        for(int i = 0; i < pairingArray.size(); i++){
+            if (genes.get(i) == 1) {
+                pairingSolution.add(pairingArray.get(i));
+            }
+        }
+        return pairingSolution;
+    }
+
+    public ArrayList<Pairing> simplexHybrid() {
 
         ArrayList<ArrayList<Pairing>> pairingsDivided = pairingsFromFlights();
-        findSimplexSolution(pairingsDivided);
 
-        return null;
+        return findSimplexSolution(pairingsDivided);
     }
 
-    private void findSimplexSolution(ArrayList<ArrayList<Pairing>> pairingsDivided) {
+    private ArrayList<Pairing> findSimplexSolution(ArrayList<ArrayList<Pairing>> pairingsDivided) {
+        ArrayList<Pairing> solutionPairings = new ArrayList<Pairing>();
         ArrayList<Double> costMatrix;
         ArrayList<ArrayList<Double>> matrix;
         ArrayList<Double> flightLine;
@@ -177,47 +184,17 @@ public class HybridMethod extends Method{
                 matrix.add(flightLine);
             }
 
-            Simplex exampleProblem = new Simplex(costMatrix, matrix);
+            Simplex exampleProblem = new Simplex(costMatrix, matrix, pairingArray);
 
-            ArrayList<Double> simplexSolution = exampleProblem.solve();
-
-            System.out.println("Solução com simplex: " + simplexSolution);
-
-            Scanner s = new Scanner(System.in);
-            // s.nextLine();
-
+            solutionPairings.addAll(exampleProblem.solve());
         }
+
+        return solutionPairings;
     }
 
     private ArrayList<ArrayList<Pairing>> pairingsFromFlights() {
         ArrayList<Pairing> pairings = new ArrayList<Pairing>(selectedPairings);
         ArrayList<ArrayList<Pairing>> res;
-//        Collections.sort(pairings);
-//        int i;
-//        boolean added;
-//
-//        while(pairings.size() != 0){
-//            i = 0;
-//            ArrayList<Pairing> destination = new ArrayList<Pairing>();
-//            destination.add(pairings.get(0));
-//            pairings.remove(0);
-//
-//            while(i < pairings.size()){
-//                added = false;
-//                for (int j = 0 ; j < destination.size(); j++){
-//                    if(hasCommonFlights(pairings.get(i), destination.get(j))) {
-//                        destination.add(pairings.get(i));
-//                        pairings.remove(i);
-//                        added = true;
-//                        break;
-//                    }
-//                }
-//                if(!added){
-//                    i++;
-//                }
-//            }
-//            res.add(new ArrayList<Pairing>(destination));
-//        }
 
         res = convertToArray(pairings);
 

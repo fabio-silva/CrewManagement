@@ -151,34 +151,32 @@ public class Main {
         System.out.println("Choose method: \n1 - Simplex\n2 - HillClimbing\n3 - Simplex hybrid");
         String choose = sc.nextLine();
 
-
+        ArrayList<Pairing> finalSolution;
         long start = System.currentTimeMillis();
 
         if (choose.compareTo("1") == 0){
-            Simplex exampleProblem = new Simplex(costMatrix, matrix);
-
-            ArrayList<Double> simplexSolution = exampleProblem.solve();
-
-            System.out.println("Solução com simplex: " + simplexSolution);
+            Simplex exampleProblem = new Simplex(costMatrix, matrix, pairingsList);
+            finalSolution = exampleProblem.solve();
         }
-        if (choose.compareTo("2") == 0) {
+        else if (choose.compareTo("2") == 0) {
             HybridMethod hm = new HybridMethod(costMatrix, matrix);
-            ArrayList<Double> hybridSolution = hm.solve();
-
-            System.out.println("Solução com HillClimbing: " + hybridSolution);
+            finalSolution = hm.solve();
         }
         else {
             HybridMethod hm = new HybridMethod(costMatrix, matrix);
-            ArrayList<Double> hybridSolution = hm.simplexHybrid();
-
-            System.out.println("Solução com Simplex Hybrid: " + hybridSolution);
+            finalSolution = hm.simplexHybrid();
         }
 
+        printSolution(finalSolution);
 
         long elapsed = System.currentTimeMillis() - start;
 
         System.out.println("elapsed time: " + elapsed/1000f);
 
+    }
+
+    private static void printSolution(ArrayList<Pairing> finalSolution) {
+        System.out.println("SOLUÇÃO: " + finalSolution.size());
     }
 
     public static boolean hasFlight(Duty d){

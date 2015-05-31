@@ -1,6 +1,8 @@
 package com.methods;
 
 
+import com.elements.Pairing;
+
 import java.util.ArrayList;
 
 public abstract class Method {
@@ -14,5 +16,5 @@ public abstract class Method {
         this.problemMatrix = problemMatrix;
     }
 
-    public abstract ArrayList<Double> solve();
+    public abstract ArrayList<Pairing> solve();
 }

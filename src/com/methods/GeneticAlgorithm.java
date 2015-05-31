@@ -190,7 +190,7 @@ public class GeneticAlgorithm extends Method{
         }
     }
 
-    public ArrayList<Double> solve(){
+    public ArrayList<Pairing> solve(){
 
         /*
 
