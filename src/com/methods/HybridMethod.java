@@ -104,36 +104,41 @@ public class HybridMethod extends Method{
 
         ArrayList<ArrayList<Pairing>> pairingsDivided = pairingsFromFlights();
 
-//        for(ArrayList<Pairing> p : pairingsDivided){
-//            for (Pairing pai : p ){
-//                System.out.print(pai.getFlights());
-//            }
-//            System.out.println("\n\n\n");
-//        }
+        for(ArrayList<Pairing> p : pairingsDivided){
+            for (Pairing pai : p ){
+                System.out.print(pai.getFlights());
+            }
+            System.out.println("\n\n\n");
+        }
 
 
-//        double totalCost = 0;
-//        Chromosome solution;
-//        int genesLeft;
-//
-//
-//
-//        for (ArrayList<Pairing> pairingArray : pairingsDivided) {
-//            solution = initialPopulation(pairingArray);
-//            genesLeft = allFlightsCovered(solution.getGenes(), pairingArray);
-//
-//            while(genesLeft != 0){
-//                System.out.println("Unavailable solution founded - " + genesLeft);
-//                solution = initialPopulation(pairingArray);
-//                genesLeft = allFlightsCovered(solution.getGenes(), pairingArray);
-//            }
-//
-//            totalCost = solution.getCost();
-//            System.out.println("Available solution FONDED: " + solution.getCost() + "--------------------------------");
-//
-//        }
+        double totalCost = 0;
+        Chromosome solution;
+        int genesLeft;
 
-        //System.out.println(pairingsDivided.size());
+
+
+        for (ArrayList<Pairing> pairingArray : pairingsDivided) {
+            solution = initialPopulation(pairingArray);
+            genesLeft = allFlightsCovered(solution.getGenes(), pairingArray);
+
+            while(genesLeft != 0){
+                System.out.println("Unavailable solution founded - " + genesLeft);
+                solution = initialPopulation(pairingArray);
+                genesLeft = allFlightsCovered(solution.getGenes(), pairingArray);
+            }
+
+            totalCost = solution.getCost();
+            System.out.println("Available solution FONDED: " + solution.getCost() + "--------------------------------");
+
+        }
+
+        return null;
+    }
+
+    public ArrayList<Double> simplexHybrid() {
+
+        ArrayList<ArrayList<Pairing>> pairingsDivided = pairingsFromFlights();
         findSimplexSolution(pairingsDivided);
 
         return null;

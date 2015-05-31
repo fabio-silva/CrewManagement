@@ -1,34 +1,31 @@
 package com.crew;
 
 
-import com.elements.Flight;
 import com.elements.Pairing;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Random;
 
 public class Person {
 
-    private String name;
-    private String function;
-    private double flightHours;
-    private int age;
-    private String flightPreference;
-    private int maxNoDays;
+    String function;
+    int id;
+    double flightHours;
+    String equipment;
+    boolean stay_overnight;
+    int salary;
     ArrayList<Pairing> pairings;
 
 
-    public Person(String name, String function, double flightHours, int age, String flightPreference, int maxNoDays) {
-        this.name = name;
+    public Person(int id, String function, String equipment, boolean stayOvernight) {
+        Random rand = new Random();
+        this.id = id;
         this.function = function;
-        this.flightHours = flightHours;
-        this.age = age;
-        this.flightPreference = flightPreference;
-        this.maxNoDays = maxNoDays;
-    }
-
-    public Person() {
-
+        this.salary = rand.nextInt(5000) + 500;
+        this.flightHours = rand.nextInt(20000) + 1;
+        this.equipment = equipment;
+        this.stay_overnight = stayOvernight;
     }
 
     public void addPairings(Pairing p){
@@ -55,18 +52,16 @@ public class Person {
         return true;
     }
 
-    public double getAuction(String flightType, double pairingDays) {
-        double auction = 0;
+    public double getAuction(String flightEquipment, boolean stayOvernight) {
 
-        if(flightType.compareTo(flightPreference) == 0){
-            auction += 50;
+        if(flightEquipment.compareTo(this.equipment) != 0) {
+            return 0.0;
         }
+        double auction = (1 / this.salary) + this.flightHours;
 
-        if(pairingDays < maxNoDays){
-            auction += 50;
+        if(stayOvernight == this.stay_overnight){
+            auction += 200;
         }
-
-        auction = ( (flightHours / 10) * (age / 10) ) + auction;
 
         return auction;
     }

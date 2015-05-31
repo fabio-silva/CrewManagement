@@ -22,6 +22,7 @@ public class Pairing implements Comparable{
 
     private double cost;
     private long timeAwayFromBase;
+    private String equipment;
 
 
     public Pairing(){
@@ -231,4 +232,7 @@ public class Pairing implements Comparable{
         return false;
     }
 
+    public String getEquipment() {
+        return duties.get(0).getFlights().get(0).getEquipment();
+    }
 }

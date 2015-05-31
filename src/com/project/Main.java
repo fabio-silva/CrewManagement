@@ -8,25 +8,29 @@ import com.methods.Assignment;
 import com.methods.GeneticAlgorithm;
 import com.methods.HybridMethod;
 import com.methods.Simplex;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import javax.swing.text.html.HTMLDocument;
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.charset.Charset;
 import java.util.*;
 
 public class Main {
+
     public static ArrayList<Pairing> pairingsList;
     public static HashSet<Duty> duties;
     public static Map<Integer, ArrayList<Flight> > flights;
-    public static ArrayList<Person> crew;
+    public static ArrayList<Person> crewAvailable;
 
     public static void main(String[] args) {
 
         flights = new HashMap<Integer, ArrayList<Flight>>();
         ArrayList< Flight > fileFlights = new ArrayList<Flight>();
-        crew = new ArrayList<Person>();
+        crewAvailable = new ArrayList<Person>();
 
         for(int i = 1; i <= 28; i++){  // CHAGE TO 28
             flights.put(i, new ArrayList<Flight>());
@@ -40,16 +44,19 @@ public class Main {
                 fileFlights.add(new Flight(parts[0], parts[1], parts[2], parts[3], parts[4], parts[5]));
             }
 
-            /*reader = new BufferedReader(new FileReader("crew"));
-            while((line = reader.readLine()) != null){
-                String[] parts = line.split(" ");
-                crew.add(new Person(parts[0], parts[1], Double.parseDouble(parts[2]), Integer.parseInt(parts[3]), parts[4], Integer.parseInt(parts[5])));
-            }*/
-
+            String crewData = readFile("crew.json");
+            JSONArray crew = new JSONArray(crewData);
+            for (int i = 0; i < crew.length(); i++) {
+                JSONObject playerData = (JSONObject) crew.get(i);
+                Person p = instantiatePlayer(playerData, i);
+                crewAvailable.add(p);
+            }
         }catch(FileNotFoundException ex){
             System.out.println("Not such file");
         }catch(IOException ex){
             System.out.println("Error reading");
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
 
         int flightId = 0;
@@ -141,7 +148,7 @@ public class Main {
         System.out.println("GERADO");
 
         Scanner sc = new Scanner(System.in);
-        System.out.println("Choose method: \n1 - Simplex\n2 - HillClimbing");
+        System.out.println("Choose method: \n1 - Simplex\n2 - HillClimbing\n3 - Simplex hybrid");
         String choose = sc.nextLine();
 
 
@@ -154,11 +161,17 @@ public class Main {
 
             System.out.println("Solução com simplex: " + simplexSolution);
         }
-        else{
+        if (choose.compareTo("2") == 0) {
             HybridMethod hm = new HybridMethod(costMatrix, matrix);
             ArrayList<Double> hybridSolution = hm.solve();
 
-            System.out.println("Solução com hybrid: " + hybridSolution);
+            System.out.println("Solução com HillClimbing: " + hybridSolution);
+        }
+        else {
+            HybridMethod hm = new HybridMethod(costMatrix, matrix);
+            ArrayList<Double> hybridSolution = hm.simplexHybrid();
+
+            System.out.println("Solução com Simplex Hybrid: " + hybridSolution);
         }
 
 
@@ -174,6 +187,27 @@ public class Main {
                 return true;
         }
         return false;
+    }
+
+    private static String readFile(String name) throws IOException {
+        FileInputStream stream = new FileInputStream(name);
+        try {
+            FileChannel fc = stream.getChannel();
+            MappedByteBuffer bb = fc.map(FileChannel.MapMode.READ_ONLY, 0,
+                    fc.size());
+			/* Instead of using default, pass in a decoder. */
+            return Charset.defaultCharset().decode(bb).toString();
+        } finally {
+            stream.close();
+        }
+    }
+
+    private static Person instantiatePlayer(JSONObject crewData, int id) throws JSONException {
+        String function = crewData.getString("Function");
+        String equipment = crewData.getString("Equipment");
+        boolean stayOvernight = crewData.getBoolean("Stay overnight");
+
+        return new Person(id, function, equipment, stayOvernight);
     }
 
 }
