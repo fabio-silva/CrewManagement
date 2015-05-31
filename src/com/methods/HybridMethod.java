@@ -11,16 +11,11 @@ import java.util.*;
 
 public class HybridMethod extends Method{
 
-    private ArrayList<Chromosome> population;
     private ArrayList<Pairing> selectedPairings;
-    private Chromosome finalChromosome;
 
     public HybridMethod(ArrayList<Double> costMatrix, ArrayList<ArrayList<Double>> problemMatrix){
-
         super(costMatrix, problemMatrix);
-        population = new ArrayList<Chromosome>();
         selectedPairings = new ArrayList<Pairing>(Main.pairingsList);
-        finalChromosome = new Chromosome();
     }
 
     public int allFlightsCovered(ArrayList<Integer> gene, ArrayList<Pairing> pairingsList){
@@ -98,17 +93,8 @@ public class HybridMethod extends Method{
 
     @Override
     public ArrayList<Pairing> solve() {
-
         ArrayList<ArrayList<Pairing>> pairingsDivided = pairingsFromFlights();
         ArrayList<Pairing> pairingsSolution = new ArrayList<Pairing>();
-
-        for(ArrayList<Pairing> p : pairingsDivided){
-            for (Pairing pai : p ){
-                System.out.print(pai.getFlights());
-            }
-            System.out.println("\n\n\n");
-        }
-
         Chromosome solution;
         int genesLeft;
 
@@ -117,17 +103,12 @@ public class HybridMethod extends Method{
             genesLeft = allFlightsCovered(solution.getGenes(), pairingArray);
 
             while(genesLeft != 0){
-                System.out.println("Unavailable solution founded - " + genesLeft);
                 solution = initialPopulation(pairingArray);
                 genesLeft = allFlightsCovered(solution.getGenes(), pairingArray);
             }
 
             pairingsSolution.addAll(getPairingsFromGenes(pairingArray, solution));
-
-            System.out.println("Available solution FONDED: " + solution.getCost() + "--------------------------------");
-
         }
-
         return pairingsSolution;
     }
 
@@ -195,36 +176,14 @@ public class HybridMethod extends Method{
     private ArrayList<ArrayList<Pairing>> pairingsFromFlights() {
         ArrayList<Pairing> pairings = new ArrayList<Pairing>(selectedPairings);
         ArrayList<ArrayList<Pairing>> res;
-
         res = convertToArray(pairings);
-
         ArrayList<ArrayList<Pairing>> sorted = sortPairings(res);
-
-        for(ArrayList<Pairing> x : sorted) {
-            for (Pairing y : x) {
-                System.out.print(y.getFlights());
-            }
-            System.out.println();
-        }
-
-
         boolean add = hasCommonFlightsBetweenPairings(sorted);
 
         while(add){
-            System.out.println("---------------------------------------------------------------------------------");
-            for(ArrayList<Pairing> x : sorted) {
-                for (Pairing y : x) {
-                    System.out.print(y.getFlights());
-                }
-                System.out.println();
-            }
             sorted = sortPairings(sorted);
             add = hasCommonFlightsBetweenPairings(sorted);
         }
-
-        System.out.println("---------------------------------------------------------------------------------");
-
-
         return sorted;
 
     }
@@ -267,8 +226,6 @@ public class HybridMethod extends Method{
                     break;
                 }
             }
-
-
                 if (next < (sorted.size() - 1)) {
                     next++;
                 } else {
@@ -312,7 +269,6 @@ public class HybridMethod extends Method{
                 return true;
             }
         }
-
         return false;
     }
 

@@ -101,7 +101,7 @@ public class Duty {
             res += " " + flights.get(i);
         }
 
-        return "DUTY :" + res;
+        return "Duty with flights :" + res;
     }
     public String getDestination(){
         return flights.get(flights.size()-1).getDestination();

@@ -100,26 +100,11 @@ public class Main {
         }
 
         System.out.println("Number of flights: " + numberOfFlights);
-
         duties = Duty.makeDuties(flights);
-
         System.out.println("Number of duties: " + duties.size());
-
-        for(Duty d : duties){
-                System.out.println("-------------DUTY----------------");
-                for (int j = 0; j < d.getFlights().size(); j++) {
-                    System.out.println(d.getFlights().get(j).getOrigin() + "->" + d.getFlights().get(j).getDestination()
-                            + ", " + d.getFlights().get(j).getDepartureTime() + "->" + d.getFlights().get(j).getArrivalTime());
-                }
-
-        }
-
         HashSet<Pairing> pairings = Pairing.makePairings(duties);
-
         pairingsList = new ArrayList<Pairing>(pairings);
-
         System.out.println("Number of pairings after remove feasible: " + pairingsList.size());
-
         ArrayList<ArrayList<Double>> matrix = new ArrayList<ArrayList<Double>>();
         ArrayList<Double> flightLine;
         ArrayList<Double> costMatrix = new ArrayList<Double>();
@@ -144,8 +129,6 @@ public class Main {
         for(Pairing p : pairingsList){
             costMatrix.add(p.getCost());
         }
-
-        System.out.println("GERADO");
 
         Scanner sc = new Scanner(System.in);
         System.out.println("Choose method: \n1 - Simplex\n2 - HillClimbing\n3 - Simplex hybrid");
@@ -177,6 +160,14 @@ public class Main {
 
     private static void printSolution(ArrayList<Pairing> finalSolution) {
         System.out.println("SOLUÇÃO: " + finalSolution.size());
+        double price = 0;
+
+        for(Pairing p : finalSolution) {
+            price += p.getCost();
+            System.out.println(p);
+            System.out.println("------------------------------------------------------------------------------------");
+        }
+        System.out.println("CUSTO FINAL : " + price);
     }
 
     public static boolean hasFlight(Duty d){

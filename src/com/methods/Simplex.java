@@ -37,8 +37,6 @@ public class Simplex extends  Method{
 
         ArrayList<Double> solution = new ArrayList<Double>(solutionList);
 
-        System.out.println(solution);
-
         for (int i = 0; i < solutionList.size(); i++) {
             if (solution.get(i) == -1.0) {
                 solutionParings.add(this.pairings.get(i));

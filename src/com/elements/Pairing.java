@@ -184,10 +184,6 @@ public class Pairing implements Comparable{
         }
 
         HashSet<Pairing> hashFromArray = new HashSet<Pairing>(pairings);
-        for(Pairing p : hashFromArray){
-            System.out.println("-------PAIRING-----------");
-            System.out.println(p);
-        }
         return hashFromArray;
     }
 
