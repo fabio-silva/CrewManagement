@@ -3,14 +3,9 @@ package com.methods;
 import com.sun.tools.javac.util.ArrayUtils;
 
 import java.awt.image.AreaAveragingScaleFilter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 
 public class Simplex extends  Method{
-
-
 
 
     public Simplex(ArrayList<Double> costMatrix, ArrayList<ArrayList<Double>> problemMatrix) {
@@ -20,25 +15,23 @@ public class Simplex extends  Method{
     public ArrayList<Double> solve(){
 
         System.out.println("binary matrix\n\n");
-        constructProblem(); // contruct problem binary matrix
+        constructProblem();
         System.out.println("dual matrix\n\n");
         constructDualProblem();
         System.out.println("Add slack variables to matrix\n\n");
         addSlackVariables();
         System.out.println("reverse last line\n\n");
-        //reverseLastLine();
-
-        matrixMethod();
 
 
+        ArrayList<ArrayList<Double>> problemMatrixAux = new ArrayList<ArrayList<Double>>(problemMatrix);
 
-       /*for (int i = 0; i < problemMatrix.size(); i++){
-            for (int j = 0; j < problemMatrix.get(i).size(); j++){
-                System.out.printf("%-7.2f", problemMatrix.get(i).get(j));
-            }
-            System.out.println();
+        boolean solved = matrixMethod();
+        while(!solved) {
+            //Scanner s = new Scanner(System.in);
+            //s.nextLine();
+            problemMatrix = new ArrayList<ArrayList<Double>>(problemMatrixAux);
+            solved = matrixMethod();
         }
-        */
 
         int lines = problemMatrix.size();
         int columns = problemMatrix.get(0).size();
@@ -51,18 +44,8 @@ public class Simplex extends  Method{
         return solution;
     }
 
-    private void matrixMethod() {
-/*
-        for (int i = 0; i < problemMatrix.size(); i++){
-            for (int j = 0; j < problemMatrix.get(i).size(); j++){
-                System.out.printf("%-7.2f", problemMatrix.get(i).get(j));
-            }
-            System.out.println();
-        }
-
-        System.out.println("\n");
-        System.out.println("\n");
-        */
+    private boolean matrixMethod() {
+        HashMap<Integer, Integer> lineTimes = new HashMap<Integer, Integer>();
 
         int column = chooseColumnPivot();
         Scanner sc = new Scanner(System.in);
@@ -71,6 +54,18 @@ public class Simplex extends  Method{
         while (column != -1){
             line = chooseLinePivot(column);
 
+            if (lineTimes.containsKey(line)) {
+                int times = lineTimes.get(line);
+                ++times;
+                if (times > 30) {
+                    return false;
+                }
+                lineTimes.put(line, times);
+            }
+            else {
+                lineTimes.put(line, 1);
+            }
+
             System.out.println("Line: " + line);
             System.out.println("Column: " + column);
 
@@ -78,30 +73,26 @@ public class Simplex extends  Method{
                 constructNextStep(column, line);
                 System.out.println("encontrou");
             }
-
             column = chooseColumnPivot();
             //sc.next();
         }
 
         System.out.println("FINAL");
+        return true;
     }
 
     private void constructNextStep(int column, int line) {
         ArrayList<ArrayList<Double>> nextMatrix = new ArrayList<ArrayList<Double>>();
         ArrayList<Double> pivotLine = new ArrayList<Double>();
-
         ArrayList<Double> auxiliarLine;
         ArrayList<Double> matrixLine = problemMatrix.get(line);
-
         double pivotValue = matrixLine.get(column);
-
-        double quotient; // Value for division
+        double quotient;
         double newValue;
 
         for (int i = 0; i < matrixLine.size(); i++) {
             pivotLine.add(i,(matrixLine.get(i)/pivotValue));
         }
-
 
         for (int i = 0; i < problemMatrix.size(); i++) {
             if (i != line) {
@@ -117,18 +108,6 @@ public class Simplex extends  Method{
                 nextMatrix.add(line, pivotLine);
         }
 
-/*
-        for (int i = 0; i < nextMatrix.size(); i++){
-            for (int j = 0; j < nextMatrix.get(i).size(); j++){
-                System.out.printf("%-7.2f", nextMatrix.get(i).get(j));
-            }
-            System.out.println();
-        }
-
-        System.out.println("\n");
-        System.out.println("\n");
-        */
-
         problemMatrix = nextMatrix;
     }
 
@@ -141,9 +120,7 @@ public class Simplex extends  Method{
         for (int i = 0; i < problemMatrix.size() - 1; i++) {
             if (problemMatrix.get(i).get(column) != 0) {
                 quotient = (problemMatrix.get(i).get(columnsNumber - 1) / problemMatrix.get(i).get(column));
-                //System.out.println("quotient: " + quotient);
                 if (quotient < lessValue && quotient >= 0) {
-                    //System.out.println("escolheu: " + quotient);
                     lessValue = quotient;
                     res.clear();
                     res.add(i);
@@ -191,15 +168,6 @@ public class Simplex extends  Method{
         }
     }
 
-    private void reverseLastLine() {
-        int matrixLastLine = problemMatrix.size() - 1;
-
-        for (int i = 0; i < problemMatrix.get(matrixLastLine).size(); i++){
-            double elem = problemMatrix.get(matrixLastLine).get(i);
-            problemMatrix.get(matrixLastLine).set(i, -elem);
-        }
-    }
-
     private void addSlackVariables() {
         int nSlackVariable = problemMatrix.size() - 1;
         ArrayList<Double> auxiliarLine;
@@ -220,14 +188,6 @@ public class Simplex extends  Method{
 
             problemMatrix.set(i, auxiliarLine);
         }
-/*
-        for (int i = 0; i < problemMatrix.size(); i++){
-            for (int j = 0; j < problemMatrix.get(i).size(); j++){
-                System.out.print(problemMatrix.get(i).get(j) + " ");
-            }
-            System.out.println("");
-        }
-        */
     }
 
     private void constructDualProblem() {
@@ -242,14 +202,6 @@ public class Simplex extends  Method{
             }
             auxiliarMatrix.add(auxiliarLine);
         }
-/*
-        for (int i = 0; i < auxiliarMatrix.size(); i++){
-            for (int j = 0; j < auxiliarMatrix.get(i).size(); j++){
-                System.out.print(auxiliarMatrix.get(i).get(j) + " ");
-            }
-            System.out.println("");
-        }
-*/
         problemMatrix = auxiliarMatrix;
 
     }
@@ -277,33 +229,7 @@ public class Simplex extends  Method{
         problemMatrix.addAll(auxiliarMatrix);
         costMatrix.add(0.0);
 
-
-
-        //   SEM MATRIZ DE CUSTOS
-        //
-        /*
-        ArrayList<Double> nullCost = new ArrayList<Double>();
-        for(int i = 0; i < costMatrix.size(); i++){
-            nullCost.add(0.0);
-        }
-        problemMatrix.add(nullCost);
-
-*/
-
-
-        //   COM MATRIZ DE CUSTOS
-
         problemMatrix.add(costMatrix);
-
-
-/*
-        for (int i = 0; i < problemMatrix.size(); i++){
-            for (int j = 0; j < problemMatrix.get(i).size(); j++){
-                System.out.print(problemMatrix.get(i).get(j) + " ");
-            }
-            System.out.println("");
-        }
-        */
     }
 
 }

@@ -214,8 +214,6 @@ public class Pairing implements Comparable{
 
         if(parent.getDestination().equals(child.getOrigin()) && diffMin >= 600 && diffMin <= 1800){
             p.addDuty(child);
-            if(childCounter+1 < duties.size())
-                depthSearch(duties, child, duties.get(childCounter+1), childCounter+1, p);
         }
         else{
             if(childCounter+1 < duties.size())

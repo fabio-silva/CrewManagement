@@ -9,6 +9,7 @@ import com.methods.GeneticAlgorithm;
 import com.methods.HybridMethod;
 import com.methods.Simplex;
 
+import javax.swing.text.html.HTMLDocument;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -33,7 +34,7 @@ public class Main {
 
         try {
             String line;
-            BufferedReader reader = new BufferedReader(new FileReader("flightSchedule_min"));
+            BufferedReader reader = new BufferedReader(new FileReader("flightSchedule_medium"));
             while((line = reader.readLine()) != null){
                 String[] parts = line.split(" ");
                 fileFlights.add(new Flight(parts[0], parts[1], parts[2], parts[3], parts[4], parts[5]));
