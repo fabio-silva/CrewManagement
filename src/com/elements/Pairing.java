@@ -69,10 +69,6 @@ public class Pairing implements Comparable{
         }
     }
 
-    public long getTimeAwayFromBase() {
-        return timeAwayFromBase;
-    }
-
     @Override
     public int compareTo(Object o) {
         int otherNumberOfFlights = ((Pairing)o).getFlights().size();
@@ -116,22 +112,12 @@ public class Pairing implements Comparable{
         return res;
     }
 
-    public double getBiggestFlightTime(){
-        double biggestTime = 0;
-
-        for (int i = 0; i < duties.size(); i++ ) {
-            double biggestFlightTimeTemp = duties.get(i).getBiggestFlightTime();
-            if(biggestFlightTimeTemp > biggestTime){
-                biggestTime = biggestFlightTimeTemp;
-            }
-        }
-
-        return biggestTime;
-    }
-
-
     public double getCost() {
-        return cost;
+        double totalCost = this.cost;
+        if (duties.size() > 1 && Main.assignment.getAverageSalaryStayOvernight() > Main.assignment.getAverageSalaryDontStayOvernight()) {
+            totalCost += 400;
+        }
+        return totalCost;
     }
 
     private void addDuty(Duty d) {

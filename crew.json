@@ -10,68 +10,53 @@
         "Stay overnight" : true
     },
     {
+        "Function": "attendant",
+        "Equipment": "CRJ",
+        "Stay overnight" : true
+    },
+    {
+        "Function": "attendant",
+        "Equipment": "CRJ",
+        "Stay overnight" : true
+    },
+    {
+        "Function": "attendant",
+        "Equipment": "CRJ",
+        "Stay overnight" : true
+    },
+    {
+        "Function": "attendant",
+        "Equipment": "CRJ",
+        "Stay overnight" : true
+    },
+    {
+        "Function": "captain",
+        "Equipment": "CRJ",
+        "Stay overnight" : false
+    },
+    {
         "Function": "captain",
         "Equipment": "ER4",
-        "Stay overnight" : true
-    },
-    {
-        "Function": "captain",
-        "Equipment": "CRJ",
-        "Stay overnight" : true
-    },
-    {
-        "Function": "captain",
-        "Equipment": "CRJ",
-        "Stay overnight" : true
-    },
-    {
-        "Function": "captain",
-        "Equipment": "CRJ",
-        "Stay overnight" : true
-    },
-    {
-        "Function": "captain",
-        "Equipment": "CRJ",
-        "Stay overnight" : true
+        "Stay overnight" : false
     },
     {
         "Function": "attendant",
         "Equipment": "CRJ",
-        "Stay overnight" : true
+        "Stay overnight" : false
     },
     {
         "Function": "attendant",
         "Equipment": "CRJ",
-        "Stay overnight" : true
+        "Stay overnight" : false
     },
     {
         "Function": "attendant",
         "Equipment": "CRJ",
-        "Stay overnight" : true
+        "Stay overnight" : false
     },
     {
         "Function": "attendant",
         "Equipment": "CRJ",
-        "Stay overnight" : true
-    },
-    {
-        "Function": "attendant",
-        "Equipment": "CRJ",
-        "Stay overnight" : true
-    },
-    {
-        "Function": "attendant",
-        "Equipment": "CRJ",
-        "Stay overnight" : true
-    },
-    {
-        "Function": "attendant",
-        "Equipment": "CRJ",
-        "Stay overnight" : true
-    },
-    {
-        "Function": "attendant",
-        "Equipment": "CRJ",
-        "Stay overnight" : true
+        "Stay overnight" : false
     }
 ]

@@ -26,6 +26,7 @@ public class Person {
         this.flightHours = rand.nextInt(20000) + 1;
         this.equipment = equipment;
         this.stay_overnight = stayOvernight;
+        pairings = new ArrayList<Pairing>();
     }
 
     public void addPairings(Pairing p){
@@ -39,16 +40,29 @@ public class Person {
 
     public boolean isAvailable(Pairing p) {
 
+        if (pairings.size() == 0) {
+            return true;
+        }
+
         for (Pairing pairing : pairings) {
+            Date myParingBeginDate = new Date(pairing.getFirstDate().getTime());
+            Date myPairingEndDate = new Date(pairing.getLastDate().getTime() + (1000 * 60 * 60 * 24));
+            Date paringBeginDate = new Date(p.getFirstDate().getTime());
+            Date pairingEndDate = new Date(p.getLastDate().getTime() + (1000 * 60 * 60 * 24));
 
-            Date endDate1 = new Date(pairing.getLastDate().getTime() + (1000 * 60 * 60 * 24));
-            Date endDate2 = new Date(p.getLastDate().getTime() + (1000 * 60 * 60 * 24));
-
-            if (endDate1.compareTo(p.getFirstDate()) >= 0 || endDate2.compareTo(pairing.getFirstDate()) >= 0) {
+            if( myParingBeginDate.compareTo(paringBeginDate) > 0 && myParingBeginDate.compareTo(myPairingEndDate) < 0){
+                return false;
+            }
+            if( myParingBeginDate.compareTo(paringBeginDate) < 0 && myPairingEndDate.compareTo(pairingEndDate) > 0){
+                return false;
+            }
+            if( myPairingEndDate.compareTo(paringBeginDate) > 0 && myPairingEndDate.compareTo(pairingEndDate) < 0){
+                return false;
+            }
+            if( myParingBeginDate.compareTo(paringBeginDate) > 0 && myPairingEndDate.compareTo(pairingEndDate) < 0){
                 return false;
             }
         }
-
         return true;
     }
 
@@ -64,5 +78,13 @@ public class Person {
         }
 
         return auction;
+    }
+
+    public boolean stay_overnight() {
+        return stay_overnight;
+    }
+
+    public int getSalary() {
+        return salary;
     }
 }

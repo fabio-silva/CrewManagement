@@ -25,6 +25,7 @@ public class Main {
     public static HashSet<Duty> duties;
     public static Map<Integer, ArrayList<Flight> > flights;
     public static ArrayList<Person> crewAvailable;
+    public static Assignment assignment;
 
     public static void main(String[] args) {
 
@@ -32,13 +33,14 @@ public class Main {
         ArrayList< Flight > fileFlights = new ArrayList<Flight>();
         crewAvailable = new ArrayList<Person>();
 
-        for(int i = 1; i <= 28; i++){  // CHAGE TO 28
+
+        for(int i = 1; i <= 28; i++){
             flights.put(i, new ArrayList<Flight>());
         }
 
         try {
             String line;
-            BufferedReader reader = new BufferedReader(new FileReader("flightSchedule_medium"));
+            BufferedReader reader = new BufferedReader(new FileReader("flightSchedule_min"));
             while((line = reader.readLine()) != null){
                 String[] parts = line.split(" ");
                 fileFlights.add(new Flight(parts[0], parts[1], parts[2], parts[3], parts[4], parts[5]));
@@ -48,9 +50,10 @@ public class Main {
             JSONArray crew = new JSONArray(crewData);
             for (int i = 0; i < crew.length(); i++) {
                 JSONObject playerData = (JSONObject) crew.get(i);
-                Person p = instantiatePlayer(playerData, i);
+                Person p = instantiatePerson(playerData, i);
                 crewAvailable.add(p);
             }
+            assignment = new Assignment(crewAvailable);
         }catch(FileNotFoundException ex){
             System.out.println("Not such file");
         }catch(IOException ex){
@@ -101,10 +104,10 @@ public class Main {
 
         System.out.println("Number of flights: " + numberOfFlights);
         duties = Duty.makeDuties(flights);
-        System.out.println("Number of duties: " + duties.size());
+        System.out.println("Number of feasible duties: " + duties.size());
         HashSet<Pairing> pairings = Pairing.makePairings(duties);
         pairingsList = new ArrayList<Pairing>(pairings);
-        System.out.println("Number of pairings after remove feasible: " + pairingsList.size());
+        System.out.println("Number of feasible pairings: " + pairingsList.size());
         ArrayList<ArrayList<Double>> matrix = new ArrayList<ArrayList<Double>>();
         ArrayList<Double> flightLine;
         ArrayList<Double> costMatrix = new ArrayList<Double>();
@@ -159,6 +162,8 @@ public class Main {
     }
 
     private static void printSolution(ArrayList<Pairing> finalSolution) {
+        assignment.setPairings(finalSolution);
+        assignment.solve();
         System.out.println("SOLUÇÃO: " + finalSolution.size());
         double price = 0;
 
@@ -182,16 +187,14 @@ public class Main {
         FileInputStream stream = new FileInputStream(name);
         try {
             FileChannel fc = stream.getChannel();
-            MappedByteBuffer bb = fc.map(FileChannel.MapMode.READ_ONLY, 0,
-                    fc.size());
-			/* Instead of using default, pass in a decoder. */
+            MappedByteBuffer bb = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
             return Charset.defaultCharset().decode(bb).toString();
         } finally {
             stream.close();
         }
     }
 
-    private static Person instantiatePlayer(JSONObject crewData, int id) throws JSONException {
+    private static Person instantiatePerson(JSONObject crewData, int id) throws JSONException {
         String function = crewData.getString("Function");
         String equipment = crewData.getString("Equipment");
         boolean stayOvernight = crewData.getBoolean("Stay overnight");

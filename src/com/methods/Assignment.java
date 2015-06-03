@@ -12,14 +12,36 @@ public class Assignment {
 
     ArrayList<Pairing> pairings;
     ArrayList<Person> crew;
+    double averageSalaryStayOvernight;
+    double averageSalaryDontStayOvernight;
 
-    public Assignment(ArrayList<Pairing> pairings, ArrayList<Person> crew) {
-        this.pairings = pairings;
+    public Assignment(ArrayList<Person> crew) {
         this.crew = crew;
+        findAverageSalaries();
+    }
+
+    private void findAverageSalaries() {
+        int totalStayOvernightSalary = 0;
+        int totalStayOvernight = 0;
+        int totalDontStayOvernightSalary = 0;
+        int totalDontStayOvernight = 0;
+
+        for (Person p : crew) {
+            if (p.stay_overnight()) {
+                totalStayOvernight++;
+                totalStayOvernightSalary+= p.getSalary();
+            }
+            else {
+                totalDontStayOvernight++;
+                totalDontStayOvernightSalary+= p.getSalary();
+            }
+        }
+
+        averageSalaryStayOvernight = totalStayOvernightSalary / totalStayOvernight;
+        averageSalaryDontStayOvernight = totalDontStayOvernightSalary / totalDontStayOvernight;
     }
 
     public void solve(){
-
         for(Pairing p : pairings){
             String equipment = p.getEquipment();
             boolean stayOvernight = false;
@@ -35,6 +57,14 @@ public class Assignment {
         }
     }
 
+    public double getAverageSalaryStayOvernight() {
+        return averageSalaryStayOvernight;
+    }
+
+    public double getAverageSalaryDontStayOvernight() {
+        return averageSalaryDontStayOvernight;
+    }
+
     private ArrayList<String> findAvailableCrew(Pairing p, String equipment, boolean stayOvernight) {
         ArrayList<String> missingCrew = new ArrayList<String>();
         Map<Double, Person> attendants = new TreeMap<Double, Person>();
@@ -44,7 +74,6 @@ public class Assignment {
         for(Person person : crew){
             if (person.isAvailable(p)) {
                 auction = person.getAuction(equipment, stayOvernight);
-
                 if(person.getFunction().compareTo("captain") == 0){
                     captains.put(auction, person);
                 }
@@ -56,14 +85,14 @@ public class Assignment {
 
         int attendantsSize = attendants.size();
         int captainsSize = captains.size();
-        int attedantsAdded = 0;
+        int attendantsAdded = 0;
         int captainAdded = 0;
 
         if (attendantsSize >= 4) {
-            for(Map.Entry<Double, Person> a : attendants.entrySet()){
-                if (attedantsAdded < 5) {
-                    attendants.get(a).addPairings(p);
-                    attedantsAdded++;
+            for(Map.Entry<Double,Person> entry : attendants.entrySet()) {
+                if (attendantsAdded < 4) {
+                    entry.getValue().addPairings(p);
+                    attendantsAdded++;
                 }
                 else {
                     break;
@@ -74,10 +103,10 @@ public class Assignment {
             missingCrew.add("attendants");
         }
 
-        if (captainsSize >= 4) {
-            for(Map.Entry<Double, Person> a : captains.entrySet()){
-                if (captainAdded < 5) {
-                    captains.get(a).addPairings(p);
+        if (captainsSize >= 2) {
+            for(Map.Entry<Double,Person> entry : captains.entrySet()) {
+                if (captainAdded < 2) {
+                    entry.getValue().addPairings(p);
                     captainAdded++;
                 }
                 else {
@@ -92,4 +121,7 @@ public class Assignment {
         return missingCrew;
     }
 
+    public void setPairings(ArrayList<Pairing> pairings) {
+        this.pairings = pairings;
+    }
 }
